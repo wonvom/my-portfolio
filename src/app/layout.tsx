@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Header } from "@/components/common/Header";
-import { Footer } from "@/components/common/Footer";
+import { CustomCursor } from "@/components/cursor/CustomCursor";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wonjong Kim — Developer Portfolio",
-  description: "Frontend developer portfolio of Wonjong Kim.",
+  title: "Wonjong Kim",
+  description: "Developer Portfolio",
 };
 
 export default function RootLayout({
@@ -29,10 +28,9 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-black text-white">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="min-h-full bg-black text-white">
+        <CustomCursor />
+        {children}
       </body>
     </html>
   );

@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom cursor: hide default pointer on desktop */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
