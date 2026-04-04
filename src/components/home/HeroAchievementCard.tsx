@@ -3,11 +3,11 @@
 import { motion } from "motion/react";
 
 const stats = [
-  { value: "3+", label: "Projects Shipped" },
-  { value: "5+", label: "Technologies" },
+  { value: "7+", label: "Projects" },
+  { value: "2yr+", label: "Industry Exp." },
 ];
 
-const stack = ["TypeScript", "React", "Next.js", "Node.js"];
+const stack = ["Python", "BigQuery", "Spring", "PyTorch", "SQL"];
 
 export function HeroAchievementCard() {
   return (
@@ -35,6 +35,18 @@ export function HeroAchievementCard() {
         <span className="text-xs text-emerald-400 tracking-wide font-medium">
           Open to Full-time
         </span>
+      </div>
+
+      {/* Headline stat */}
+      <div className="space-y-1">
+        <p className="text-[10px] text-neutral-600 tracking-widest uppercase">
+          핵심 성과
+        </p>
+        <p className="text-sm text-white font-medium leading-snug">
+          수작업 데이터 분석 리드타임{" "}
+          <span className="text-emerald-400">수일 → 30분</span>으로 단축
+        </p>
+        <p className="text-xs text-neutral-500">배터리 전극 두께 데이터 자동화 @Ultium Cells</p>
       </div>
 
       {/* Stats row */}

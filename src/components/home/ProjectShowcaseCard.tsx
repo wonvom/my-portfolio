@@ -24,7 +24,6 @@ function ImagePreview({ src, alt }: { src?: string; alt: string }) {
   }
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/60 to-neutral-900/80 flex flex-col items-center justify-center gap-2">
-      {/* Subtle grid pattern */}
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -59,17 +58,21 @@ export function ProjectShowcaseCard({ project }: ProjectShowcaseCardProps) {
       {/* Image preview */}
       <div className="relative h-36 w-full overflow-hidden bg-neutral-900 shrink-0">
         <ImagePreview src={project.imageUrl} alt={project.imageAlt ?? project.title} />
-        {/* Bottom fade */}
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#0d0e18] to-transparent" />
       </div>
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-5 gap-4">
-        {/* Title + link */}
+        {/* Title + links */}
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-semibold text-white text-base leading-tight">
-            {project.title}
-          </h3>
+          <div>
+            <h3 className="font-semibold text-white text-sm leading-tight">
+              {project.title}
+            </h3>
+            {project.period && (
+              <p className="text-[10px] text-neutral-600 font-mono mt-0.5">{project.period}</p>
+            )}
+          </div>
           <div className="flex gap-2 shrink-0">
             {project.githubHref && (
               <a
@@ -81,14 +84,12 @@ export function ProjectShowcaseCard({ project }: ProjectShowcaseCardProps) {
                 GH
               </a>
             )}
-            {project.href && (
-              <Link
-                href={project.href}
-                className="text-xs text-neutral-300 hover:text-white transition-colors px-2.5 py-0.5 rounded border border-white/[0.12] hover:border-white/25"
-              >
-                View →
-              </Link>
-            )}
+            <Link
+              href={`/projects/${project.id}`}
+              className="text-xs text-neutral-300 hover:text-white transition-colors px-2.5 py-0.5 rounded border border-white/[0.12] hover:border-white/25"
+            >
+              Detail →
+            </Link>
           </div>
         </div>
 

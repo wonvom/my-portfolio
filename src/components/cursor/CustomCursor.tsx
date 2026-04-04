@@ -15,8 +15,11 @@ export function CustomCursor() {
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: fine)");
+    const updatePointer = () => setHasFinePointer(mq.matches);
+    mq.addEventListener("change", updatePointer);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasFinePointer(mq.matches);
-    if (!mq.matches) return;
+    if (!mq.matches) return () => mq.removeEventListener("change", updatePointer);
 
     let moveTimer: ReturnType<typeof setTimeout>;
 
