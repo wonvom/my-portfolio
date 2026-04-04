@@ -10,7 +10,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
     <div className="flex flex-col rounded-lg border border-white/10 bg-white/5 p-6 gap-3">
       <h3 className="font-semibold text-white">{project.title}</h3>
       <p className="flex-1 text-sm text-neutral-400 leading-relaxed">
-        {project.description}
+        {project.problem}
       </p>
       <div className="flex flex-wrap gap-2">
         {project.tags.map((tag) => (
