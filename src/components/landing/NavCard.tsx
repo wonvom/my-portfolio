@@ -7,6 +7,7 @@ import {
   useSpring,
   useMotionTemplate,
 } from "motion/react";
+import { useTheme } from "@/providers/ThemeProvider";
 import type { LandingCard, Language } from "@/types/landing";
 
 export const cardVariants = {
@@ -27,6 +28,7 @@ type NavCardProps = {
 
 export function NavCard({ card, lang, onExpand }: NavCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
@@ -36,7 +38,11 @@ export function NavCard({ card, lang, onExpand }: NavCardProps) {
   const springRotateX = useSpring(rotateX, { stiffness: 280, damping: 28 });
   const springRotateY = useSpring(rotateY, { stiffness: 280, damping: 28 });
 
-  const highlightBg = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(255,255,255,0.13) 0%, transparent 65%)`;
+  // Two templates always created — hooks must be unconditional
+  const highlightBgDark = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(255,255,255,0.13) 0%, transparent 65%)`;
+  const highlightBgLight = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(0,0,0,0.08) 0%, transparent 65%)`;
+
+  const highlightBg = theme === "dark" ? highlightBgDark : highlightBgLight;
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
