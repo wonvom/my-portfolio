@@ -18,17 +18,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* sugar-high syntax token colors (Tokyo Night palette) — always dark in code blocks */
-.sh-keyword    { color: #bb9af7; }
-.sh-string     { color: #9ece6a; }
-.sh-comment    { color: #565f89; font-style: italic; }
-.sh-number     { color: #ff9e64; }
-.sh-identifier { color: #c0caf5; }
-.sh-property   { color: #73daca; }
-.sh-class      { color: #e0af68; }
-.sh-sign       { color: #89ddff; }
-.sh-jsxliterals{ color: #f7768e; }
-.sh-entity     { color: #7aa2f7; }
+/* ─── Syntax highlighting — Light mode (VS Code Light+) ─── */
+.sh-keyword    { color: #0000ff; }
+.sh-string     { color: #a31515; }
+.sh-comment    { color: #008000; font-style: italic; }
+.sh-number     { color: #098658; }
+.sh-identifier { color: #001080; }
+.sh-property   { color: #0070c1; }
+.sh-class      { color: #267f99; }
+.sh-sign       { color: #383a42; }
+.sh-jsxliterals{ color: #800000; }
+.sh-entity     { color: #795e26; }
+
+/* ─── Syntax highlighting — Dark mode (Tokyo Night) ─── */
+.dark .sh-keyword    { color: #bb9af7; }
+.dark .sh-string     { color: #9ece6a; }
+.dark .sh-comment    { color: #565f89; font-style: italic; }
+.dark .sh-number     { color: #ff9e64; }
+.dark .sh-identifier { color: #c0caf5; }
+.dark .sh-property   { color: #73daca; }
+.dark .sh-class      { color: #e0af68; }
+.dark .sh-sign       { color: #89ddff; }
+.dark .sh-jsxliterals{ color: #f7768e; }
+.dark .sh-entity     { color: #7aa2f7; }
 
 /* Custom cursor: hide default pointer on desktop */
 @media (pointer: fine) {

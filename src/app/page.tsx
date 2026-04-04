@@ -42,7 +42,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#07070f] flex flex-col items-center justify-center relative overflow-hidden px-4 py-16">
+    <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#07070f] flex flex-col items-center justify-center relative overflow-hidden px-4 py-16 transition-colors duration-300">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_55%_at_50%_50%,rgba(80,90,200,0.05),transparent_70%)]" />
 
@@ -66,10 +66,10 @@ export default function LandingPage() {
             transition={{ duration: 0.45, ease: "easeOut" }}
           >
             <div className="text-center space-y-1.5">
-              <p className="text-neutral-600 text-xs tracking-[0.3em] uppercase">
+              <p className="text-neutral-400 dark:text-neutral-600 text-xs tracking-[0.3em] uppercase">
                 Wonjong Kim
               </p>
-              <p className="text-neutral-600 text-sm tracking-wide">
+              <p className="text-neutral-500 dark:text-neutral-600 text-sm tracking-wide">
                 {subtitle[lang]}
               </p>
             </div>
@@ -78,7 +78,7 @@ export default function LandingPage() {
         )}
       </AnimatePresence>
 
-      {/* Black hole expansion overlay */}
+      {/* Expansion overlay */}
       {expanding && (
         <ExpansionOverlay
           rect={expanding.rect}

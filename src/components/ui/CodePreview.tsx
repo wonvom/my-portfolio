@@ -12,9 +12,9 @@ export function CodePreview({ code, filename }: CodePreviewProps) {
   const html = highlight(code);
 
   return (
-    <div className="rounded-lg overflow-hidden border border-white/[0.08] bg-[#0d0e17]">
+    <div className="rounded-lg overflow-hidden border border-black/[0.08] dark:border-white/[0.08] bg-[#f8f8f8] dark:bg-[#0d0e17]">
       {filename && (
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.06] bg-white/[0.03]">
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-black/[0.06] dark:border-white/[0.06] bg-black/[0.03] dark:bg-white/[0.03]">
           <span className="text-[10px] text-neutral-500 font-mono">{filename}</span>
         </div>
       )}
