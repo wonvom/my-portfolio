@@ -7,6 +7,7 @@ import type { Language } from "@/types/landing";
 
 type LandingGridProps = {
   lang: Language;
+  onExpand: (rect: DOMRect, href: string) => void;
 };
 
 const containerVariants = {
@@ -16,7 +17,7 @@ const containerVariants = {
   },
 };
 
-export function LandingGrid({ lang }: LandingGridProps) {
+export function LandingGrid({ lang, onExpand }: LandingGridProps) {
   return (
     <motion.div
       className="grid grid-cols-2 gap-3 sm:gap-4 w-[min(520px,90vw)]"
@@ -25,7 +26,7 @@ export function LandingGrid({ lang }: LandingGridProps) {
       animate="show"
     >
       {landingCards.map((card) => (
-        <NavCard key={card.id} card={card} lang={lang} />
+        <NavCard key={card.id} card={card} lang={lang} onExpand={onExpand} />
       ))}
     </motion.div>
   );

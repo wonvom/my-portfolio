@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import {
   motion,
@@ -22,9 +23,12 @@ export const cardVariants = {
 type NavCardProps = {
   card: LandingCard;
   lang: Language;
+  onExpand: (rect: DOMRect, href: string) => void;
 };
 
-export function NavCard({ card, lang }: NavCardProps) {
+export function NavCard({ card, lang, onExpand }: NavCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
   const highlightX = useMotionValue(50);
@@ -54,6 +58,11 @@ export function NavCard({ card, lang }: NavCardProps) {
     highlightY.set(50);
   }
 
+  function handleInternalClick() {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (rect) onExpand(rect, card.href);
+  }
+
   const cardContent = (
     <div
       className="
@@ -80,6 +89,7 @@ export function NavCard({ card, lang }: NavCardProps) {
 
   return (
     <motion.div
+      ref={cardRef}
       className="aspect-square w-full"
       variants={cardVariants}
       style={{
@@ -104,9 +114,13 @@ export function NavCard({ card, lang }: NavCardProps) {
           {cardContent}
         </a>
       ) : (
-        <Link href={card.href} className="block w-full h-full" aria-label={card.label}>
+        <button
+          onClick={handleInternalClick}
+          className="block w-full h-full bg-transparent border-none p-0"
+          aria-label={card.label}
+        >
           {cardContent}
-        </Link>
+        </button>
       )}
     </motion.div>
   );

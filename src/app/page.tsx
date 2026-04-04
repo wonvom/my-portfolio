@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { LanguageSelect } from "@/components/landing/LanguageSelect";
 import { LandingGrid } from "@/components/landing/LandingGrid";
+import { ExpansionOverlay } from "@/components/landing/ExpansionOverlay";
 import type { Language } from "@/types/landing";
 
 type Step = "language" | "cards";
+
+type Expanding = {
+  rect: DOMRect;
+  href: string;
+};
 
 const subtitle: Record<Language, string> = {
   ko: "섹션을 선택하세요",
@@ -14,12 +21,24 @@ const subtitle: Record<Language, string> = {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>("language");
   const [lang, setLang] = useState<Language>("en");
+  const [expanding, setExpanding] = useState<Expanding | null>(null);
 
   function handleLanguageSelect(selected: Language) {
     setLang(selected);
     setStep("cards");
+  }
+
+  function handleExpand(rect: DOMRect, href: string) {
+    setExpanding({ rect, href });
+  }
+
+  function handleExpansionComplete() {
+    if (expanding) {
+      router.push(expanding.href);
+    }
   }
 
   return (
@@ -54,10 +73,18 @@ export default function LandingPage() {
                 {subtitle[lang]}
               </p>
             </div>
-            <LandingGrid lang={lang} />
+            <LandingGrid lang={lang} onExpand={handleExpand} />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Black hole expansion overlay */}
+      {expanding && (
+        <ExpansionOverlay
+          rect={expanding.rect}
+          onComplete={handleExpansionComplete}
+        />
+      )}
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-black text-white">
+      <body className="min-h-full bg-[#07070f] text-white">
         <CustomCursor />
         {children}
       </body>
