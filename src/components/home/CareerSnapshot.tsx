@@ -5,7 +5,7 @@ import { careerItems } from "@/data/career";
 
 export function CareerSnapshot() {
   return (
-    <section className="py-16 border-t border-white/[0.06]">
+    <section className="py-16 border-t border-black/[0.06] dark:border-white/[0.06]">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -14,15 +14,15 @@ export function CareerSnapshot() {
         className="space-y-8"
       >
         <div className="space-y-1">
-          <p className="text-[10px] text-neutral-600 tracking-widest uppercase">
+          <p className="text-[10px] text-neutral-400 dark:text-neutral-600 tracking-widest uppercase">
             Background
           </p>
-          <h2 className="text-2xl font-semibold text-white">Career Snapshot</h2>
+          <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">Career Snapshot</h2>
         </div>
 
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.07]" />
+          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-black/[0.07] dark:bg-white/[0.07]" />
 
           <div className="space-y-6 pl-7">
             {careerItems.map((item, i) => (
@@ -35,19 +35,19 @@ export function CareerSnapshot() {
                 className="relative"
               >
                 {/* Dot */}
-                <div className="absolute -left-7 top-1.5 w-3.5 h-3.5 rounded-full border border-white/[0.15] bg-[#07070f] flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-500" />
+                <div className="absolute -left-7 top-1.5 w-3.5 h-3.5 rounded-full border border-black/[0.15] dark:border-white/[0.15] bg-[#f5f5f7] dark:bg-[#07070f] flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-500" />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-4">
-                  <span className="text-[10px] text-neutral-600 font-mono shrink-0">
+                  <span className="text-[10px] text-neutral-400 dark:text-neutral-600 font-mono shrink-0">
                     {item.period}
                   </span>
                   <div>
-                    <span className="text-sm font-medium text-white">{item.role}</span>
-                    <span className="text-neutral-600 text-sm"> @ </span>
-                    <span className="text-sm text-neutral-400">{item.org}</span>
-                    <p className="text-xs text-neutral-600 mt-0.5 leading-relaxed">
+                    <span className="text-sm font-medium text-neutral-900 dark:text-white">{item.role}</span>
+                    <span className="text-neutral-400 text-sm"> @ </span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-400">{item.org}</span>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-600 mt-0.5 leading-relaxed">
                       {item.description}
                     </p>
                   </div>

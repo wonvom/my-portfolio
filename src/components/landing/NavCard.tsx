@@ -66,9 +66,10 @@ export function NavCard({ card, lang, onExpand }: NavCardProps) {
     <div
       className="
         w-full h-full rounded-[30%] relative overflow-hidden
-        bg-white/[0.055] backdrop-blur-2xl
-        border border-white/[0.11]
-        shadow-[0_8px_32px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.11)]
+        bg-white/[0.08] dark:bg-white/[0.055] backdrop-blur-2xl
+        border border-black/[0.1] dark:border-white/[0.11]
+        shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.8)]
+        dark:shadow-[0_8px_32px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.11)]
         flex flex-col items-center justify-center gap-1.5 p-6
       "
     >
@@ -76,8 +77,8 @@ export function NavCard({ card, lang, onExpand }: NavCardProps) {
         className="absolute inset-0 pointer-events-none"
         style={{ background: highlightBg }}
       />
-      <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      <span className="relative text-white font-medium text-lg sm:text-xl tracking-wide select-none">
+      <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-black/[0.06] dark:via-white/20 to-transparent" />
+      <span className="relative text-neutral-900 dark:text-white font-medium text-lg sm:text-xl tracking-wide select-none">
         {card.label}
       </span>
       <span className="relative text-neutral-500 text-xs tracking-wide select-none">

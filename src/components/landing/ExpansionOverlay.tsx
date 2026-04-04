@@ -15,7 +15,7 @@ export function ExpansionOverlay({ rect, onComplete }: ExpansionOverlayProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[500] bg-[#07070f]"
+      className="fixed inset-0 z-[500] bg-[#f5f5f7] dark:bg-[#07070f]"
       initial={{
         clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round 30%)`,
       }}

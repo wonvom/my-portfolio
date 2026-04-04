@@ -21,13 +21,13 @@ export function LanguageSelect({ onSelect }: LanguageSelectProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <p className="text-neutral-600 text-xs tracking-[0.3em] uppercase">
+        <p className="text-neutral-500 dark:text-neutral-600 text-xs tracking-[0.3em] uppercase">
           Wonjong Kim
         </p>
-        <p className="text-white text-lg font-light tracking-wide">
+        <p className="text-neutral-900 dark:text-white text-lg font-light tracking-wide">
           언어를 선택해주세요
         </p>
-        <p className="text-neutral-600 text-sm tracking-wide">
+        <p className="text-neutral-500 dark:text-neutral-600 text-sm tracking-wide">
           Choose your language
         </p>
       </motion.div>
@@ -44,18 +44,18 @@ export function LanguageSelect({ onSelect }: LanguageSelectProps) {
             onClick={() => onSelect(lang)}
             className="
               w-36 h-14 rounded-2xl
-              bg-white/[0.06] backdrop-blur-xl
-              border border-white/[0.11]
-              text-white font-medium tracking-wide text-sm
-              shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]
+              bg-black/[0.05] dark:bg-white/[0.06] backdrop-blur-xl
+              border border-black/[0.1] dark:border-white/[0.11]
+              text-neutral-900 dark:text-white font-medium tracking-wide text-sm
+              shadow-[0_4px_20px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)]
+              dark:shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]
               relative overflow-hidden
             "
             whileHover={{ scale: 1.05, y: -3 }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            {/* Top edge gleam */}
-            <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-black/[0.06] dark:via-white/20 to-transparent" />
             <span className="relative">{label}</span>
           </motion.button>
         ))}
