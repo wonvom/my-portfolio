@@ -7,7 +7,7 @@ import {
   useSpring,
   useMotionTemplate,
 } from "motion/react";
-import type { LandingCard } from "@/types/landing";
+import type { LandingCard, Language } from "@/types/landing";
 
 export const cardVariants = {
   hidden: { opacity: 0, scale: 0.88, y: 20 },
@@ -21,9 +21,10 @@ export const cardVariants = {
 
 type NavCardProps = {
   card: LandingCard;
+  lang: Language;
 };
 
-export function NavCard({ card }: NavCardProps) {
+export function NavCard({ card, lang }: NavCardProps) {
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
   const highlightX = useMotionValue(50);
@@ -63,20 +64,16 @@ export function NavCard({ card }: NavCardProps) {
         flex flex-col items-center justify-center gap-1.5 p-6
       "
     >
-      {/* Moving highlight */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ background: highlightBg }}
       />
-      {/* Top edge gleam */}
       <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      {/* Label */}
       <span className="relative text-white font-medium text-lg sm:text-xl tracking-wide select-none">
         {card.label}
       </span>
-      {/* Description */}
       <span className="relative text-neutral-500 text-xs tracking-wide select-none">
-        {card.description}
+        {card.description[lang]}
       </span>
     </div>
   );

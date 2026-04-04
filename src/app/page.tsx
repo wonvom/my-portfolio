@@ -1,25 +1,63 @@
+"use client";
+
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { LanguageSelect } from "@/components/landing/LanguageSelect";
 import { LandingGrid } from "@/components/landing/LandingGrid";
+import type { Language } from "@/types/landing";
+
+type Step = "language" | "cards";
+
+const subtitle: Record<Language, string> = {
+  ko: "섹션을 선택하세요",
+  en: "Select a destination",
+};
 
 export default function LandingPage() {
+  const [step, setStep] = useState<Step>("language");
+  const [lang, setLang] = useState<Language>("en");
+
+  function handleLanguageSelect(selected: Language) {
+    setLang(selected);
+    setStep("cards");
+  }
+
   return (
     <div className="min-h-screen bg-[#07070f] flex flex-col items-center justify-center relative overflow-hidden px-4 py-16">
-      {/* Subtle background glow */}
+      {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_55%_at_50%_50%,rgba(80,90,200,0.05),transparent_70%)]" />
 
-      {/* Header text */}
-      <div className="text-center mb-10 space-y-1.5 relative">
-        <p className="text-neutral-600 text-xs tracking-[0.3em] uppercase">
-          Wonjong Kim
-        </p>
-        <p className="text-neutral-600 text-sm tracking-wide">
-          Select a destination
-        </p>
-      </div>
-
-      {/* 2×2 card grid */}
-      <div className="relative">
-        <LandingGrid />
-      </div>
+      <AnimatePresence mode="wait">
+        {step === "language" ? (
+          <motion.div
+            key="language"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <LanguageSelect onSelect={handleLanguageSelect} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="cards"
+            className="flex flex-col items-center gap-10"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+          >
+            <div className="text-center space-y-1.5">
+              <p className="text-neutral-600 text-xs tracking-[0.3em] uppercase">
+                Wonjong Kim
+              </p>
+              <p className="text-neutral-600 text-sm tracking-wide">
+                {subtitle[lang]}
+              </p>
+            </div>
+            <LandingGrid lang={lang} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
