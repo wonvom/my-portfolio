@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { geoMercator, geoPath, geoCentroid } from "d3-geo";
 import * as topojson from "topojson-client";
 import { motion } from "motion/react";
+import { useTheme } from "@/providers/ThemeProvider";
 import type { GalleryCountry } from "@/types/gallery";
 import type { Topology, GeometryCollection } from "topojson-specification";
 import type { FeatureCollection, Geometry } from "geojson";
@@ -12,10 +13,9 @@ const ATLAS_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
 const VW = 960;
 const VH = 500;
 const ANTARCTICA_ID = "010";
-const PIN_R = 1.8;   // smaller sphere radius in SVG units
-const OFFSET = 50;   // centroid → label center distance (SVG units)
-const LW = 82;       // label width
-const LH = 22;       // label height
+const PIN_R = 1.4;  // sphere radius (SVG units)
+const LW = 80;      // label width
+const LH = 21;      // label height
 
 const WORLD_CLIP: GeoJSON.Feature = {
   type: "Feature",
@@ -26,34 +26,33 @@ const WORLD_CLIP: GeoJSON.Feature = {
   properties: {},
 };
 
-type Dir = "up" | "down" | "left" | "right";
-
-// Directional float: place label in the ocean / open space beside the country
-const LABEL_DIR: Record<string, Dir> = {
-  "392": "right", // Japan  → Pacific Ocean (right)
-  "410": "left",  // South Korea → Yellow Sea (left)
-  "156": "up",    // China
-  "840": "up",    // United States
-  "124": "up",    // Canada
+/**
+ * Per-country diagonal offset from centroid to label center [dx, dy] in SVG units.
+ * All labels are placed diagonally so leader lines are never horizontal/vertical.
+ * Offsets are chosen so labels sit in open ocean / sky and never overlap each other.
+ *   Japan  → upper-right (Pacific Ocean)
+ *   Korea  → high upper-left (Yellow Sea, above China label)
+ *   China  → upper-left
+ *   USA    → upper-left
+ *   Canada → upper-left
+ */
+const OFFSETS: Record<string, [number, number]> = {
+  "392": [55, -45],    // Japan
+  "410": [-55, -85],   // South Korea  (higher than China to avoid overlap)
+  "156": [-65, -45],   // China
+  "840": [-50, -55],   // United States
+  "124": [-40, -55],   // Canada
 };
+const DEFAULT_OFFSET: [number, number] = [-45, -50];
 
-const DISPLAY_NAME: Record<string, string> = {
-  "840": "United States",
-};
+const DISPLAY_NAME: Record<string, string> = { "840": "United States" };
 
-function labelCenter(cx: number, cy: number, dir: Dir): [number, number] {
-  if (dir === "right") return [cx + OFFSET, cy];
-  if (dir === "left")  return [cx - OFFSET, cy];
-  if (dir === "up")    return [cx, cy - OFFSET];
-  return [cx, cy + OFFSET];
-}
-
-/** Point on the label box edge facing the centroid. */
-function boxEdge(lx: number, ly: number, dir: Dir): [number, number] {
-  if (dir === "right") return [lx - LW / 2, ly];
-  if (dir === "left")  return [lx + LW / 2, ly];
-  if (dir === "up")    return [lx, ly + LH / 2];
-  return [lx, ly - LH / 2];
+/**
+ * The corner of the label box that is closest to the centroid.
+ * Always returns the "inner corner" for a clean diagonal line.
+ */
+function innerCorner(lx: number, ly: number, dx: number, dy: number): [number, number] {
+  return [dx > 0 ? lx - LW / 2 : lx + LW / 2, dy > 0 ? ly - LH / 2 : ly + LH / 2];
 }
 
 interface Pin { country: GalleryCountry; cx: number; cy: number }
@@ -65,6 +64,8 @@ interface Props {
 }
 
 export function WorldMapView({ countries, onSelectCountry, interactive }: Props) {
+  const { theme } = useTheme();
+  const dark = theme === "dark";
   const [worldPaths, setWorldPaths] = useState<{ id: string; d: string }[]>([]);
   const [pins, setPins] = useState<Pin[]>([]);
   const [showPins, setShowPins] = useState(false);
@@ -101,7 +102,7 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
             if (c) newPins.push({ country, cx: c[0], cy: c[1] });
           }
         }
-        newPins.sort((a, b) => a.cx - b.cx); // west → east for wave stagger
+        newPins.sort((a, b) => a.cx - b.cx);
         setPins(newPins);
         setTimeout(() => setShowPins(true), 480);
       })
@@ -109,19 +110,17 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const dark =
-    typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-  const c = {
+  const col = {
     ocean:       dark ? "#0b0f14" : "#d6e8f5",
     land:        dark ? "#1c2535" : "#cdd4da",
     hiLand:      dark ? "#233248" : "#94acc2",
     border:      dark ? "#252f3d" : "#aab8c4",
-    labelBg:     dark ? "rgba(14,19,30,0.92)"  : "rgba(255,255,255,0.92)",
-    labelBgHov:  dark ? "rgba(28,40,60,0.97)"  : "rgba(230,240,255,0.97)",
-    labelStroke: dark ? "rgba(255,255,255,0.13)" : "rgba(0,0,0,0.12)",
+    labelBg:     dark ? "rgba(14,19,30,0.93)" : "rgba(255,255,255,0.93)",
+    labelBgHov:  dark ? "rgba(28,42,62,0.97)" : "rgba(230,240,255,0.97)",
+    labelStroke: dark ? "rgba(255,255,255,0.13)" : "rgba(0,0,0,0.13)",
     nameText:    dark ? "#f0f0f0" : "#111111",
-    subText:     dark ? "#666666" : "#888888",
-    line:        "#c81818",
+    subText:     dark ? "#606060" : "#888888",
+    line:        dark ? "rgba(200,205,215,0.75)" : "rgba(25,25,25,0.72)",
   };
 
   return (
@@ -133,46 +132,48 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
       style={{ display: "block" }}
     >
       <defs>
+        {/* 3-D red sphere */}
         <radialGradient id="pinSphere" cx="36%" cy="30%" r="70%">
           <stop offset="0%"   stopColor="#ff8080" />
           <stop offset="48%"  stopColor="#e52222" />
           <stop offset="100%" stopColor="#6a0000" />
         </radialGradient>
-        <filter id="pinGlow" x="-100%" y="-100%" width="300%" height="300%">
-          <feDropShadow dx="0" dy="0.6" stdDeviation="1.8" floodColor="rgba(160,0,0,0.55)" />
+        <filter id="pinGlow" x="-120%" y="-120%" width="340%" height="340%">
+          <feDropShadow dx="0" dy="0.5" stdDeviation="1.5" floodColor="rgba(150,0,0,0.5)" />
         </filter>
-        {/* Arrow marker — tip points toward country */}
-        <marker id="arrow" viewBox="0 0 8 6" refX="7.5" refY="3"
-          markerWidth="4" markerHeight="3.5" orient="auto">
-          <path d="M0,0 L8,3 L0,6 Z" fill={c.line} opacity="0.75" />
+        {/* Arrowhead — tip placed at sphere surface, color matches line */}
+        <marker id="arrow" viewBox="0 0 8 6" refX="8" refY="3"
+          markerWidth="4" markerHeight="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill={col.line} />
         </marker>
       </defs>
 
-      {/* Ocean */}
-      <rect width={VW} height={VH} fill={c.ocean} />
+      {/* Ocean background */}
+      <rect width={VW} height={VH} fill={col.ocean} />
 
       {/* Country shapes */}
       <g>
         {worldPaths.map(({ id, d }) => (
           <path key={id} d={d}
-            fill={countrySet.has(id) ? c.hiLand : c.land}
-            stroke={c.border} strokeWidth={0.5} />
+            fill={countrySet.has(id) ? col.hiLand : col.land}
+            stroke={col.border} strokeWidth={0.5} />
         ))}
       </g>
 
-      {/* Country labels + pins (pure SVG, no DOM overlay) */}
+      {/* Pins + diagonal leader lines + labels */}
       {showPins && pins.map(({ country, cx, cy }, i) => {
-        const dir = LABEL_DIR[country.isoNumeric] ?? "up";
-        const [lx, ly]  = labelCenter(cx, cy, dir);
-        const [ex, ey]  = boxEdge(lx, ly, dir);
+        const [dx, dy] = OFFSETS[country.isoNumeric] ?? DEFAULT_OFFSET;
+        const lx = cx + dx;
+        const ly = cy + dy;
+        const [ex, ey] = innerCorner(lx, ly, dx, dy);
         const name = DISPLAY_NAME[country.isoNumeric] ?? country.name;
         const hov  = hoveredId === country.isoNumeric;
 
-        // Shorten line so arrowhead stops just before sphere
-        const dx = cx - ex, dy = cy - ey;
-        const len = Math.hypot(dx, dy) || 1;
-        const x2 = cx - (dx / len) * (PIN_R + 2.5);
-        const y2 = cy - (dy / len) * (PIN_R + 2.5);
+        // Shorten line so arrowhead tip lands exactly on the sphere surface
+        const vx = cx - ex, vy = cy - ey;
+        const len = Math.hypot(vx, vy) || 1;
+        const x2 = cx - (vx / len) * PIN_R;
+        const y2 = cy - (vy / len) * PIN_R;
 
         return (
           <motion.g
@@ -185,22 +186,22 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
             onMouseLeave={() => setHoveredId(null)}
             style={{ cursor: interactive ? "pointer" : "default" }}
           >
-            {/* Leader line + arrowhead toward centroid */}
+            {/* Diagonal leader line: box corner → sphere surface */}
             <line x1={ex} y1={ey} x2={x2} y2={y2}
-              stroke={c.line} strokeWidth={0.65} opacity={0.6}
+              stroke={col.line} strokeWidth={0.6}
               markerEnd="url(#arrow)" />
 
-            {/* Label background */}
+            {/* Label box */}
             <rect
               x={lx - LW / 2} y={ly - LH / 2} width={LW} height={LH} rx={4}
-              fill={hov ? c.labelBgHov : c.labelBg}
-              stroke={c.labelStroke} strokeWidth={0.5}
+              fill={hov ? col.labelBgHov : col.labelBg}
+              stroke={col.labelStroke} strokeWidth={0.5}
             />
 
             {/* Country name */}
             <text x={lx} y={ly - 2.5}
               textAnchor="middle" dominantBaseline="middle"
-              fontSize={8} fontWeight={600} fill={c.nameText}
+              fontSize={8} fontWeight={600} fill={col.nameText}
               fontFamily="var(--font-geist-sans)">
               {name}
             </text>
@@ -208,12 +209,12 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
             {/* Photo count */}
             <text x={lx} y={ly + 6.5}
               textAnchor="middle" dominantBaseline="middle"
-              fontSize={5.5} fill={c.subText}
+              fontSize={5.5} fill={col.subText}
               fontFamily="var(--font-geist-sans)">
               {country.totalPhotos} photo{country.totalPhotos !== 1 ? "s" : ""}
             </text>
 
-            {/* Red 3D sphere pin — sits exactly at the centroid */}
+            {/* Red 3-D sphere — exact centroid, rendered on top */}
             <circle cx={cx} cy={cy} r={PIN_R}
               fill="url(#pinSphere)" filter="url(#pinGlow)" />
           </motion.g>
