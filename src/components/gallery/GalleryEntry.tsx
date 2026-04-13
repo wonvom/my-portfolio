@@ -37,6 +37,8 @@ interface Props {
 export function GalleryEntry({ countries }: Props) {
   const [view, setView] = useState<GalleryView>("world");
   const [selected, setSelected] = useState<GalleryCountry | null>(null);
+  // Disable map interaction until the entry zoom-in finishes
+  const [interactive, setInteractive] = useState(false);
 
   function handleSelectCountry(country: GalleryCountry) {
     playDingDong();
@@ -56,12 +58,12 @@ export function GalleryEntry({ countries }: Props) {
 
   return (
     <div className="w-full h-full relative overflow-hidden">
-      {/* Initial zoom-in of the map */}
       <motion.div
         className="w-full h-full"
         initial={{ scale: 0.55, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        onAnimationComplete={() => setInteractive(true)}
       >
         <AnimatePresence mode="wait">
           {view === "world" && (
@@ -76,6 +78,7 @@ export function GalleryEntry({ countries }: Props) {
               <WorldMapView
                 countries={countries}
                 onSelectCountry={handleSelectCountry}
+                interactive={interactive}
               />
             </motion.div>
           )}
