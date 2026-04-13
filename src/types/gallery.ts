@@ -16,8 +16,4 @@ export interface GalleryCountry {
   totalPhotos: number;
 }
 
-export interface TravelData {
-  countries: GalleryCountry[];
-}
-
 export type GalleryView = "world" | "country";
