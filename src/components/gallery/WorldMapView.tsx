@@ -12,24 +12,24 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 const ATLAS_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const VW = 960;
 const VH = 500;
-const MIN_K = 0.7;
-const MAX_K = 14;
 const ANTARCTICA_ID = "010";
 
-// Bounding rect used to fitSize so Antarctica is cropped and map is centered
 const WORLD_CLIP: GeoJSON.Feature = {
   type: "Feature",
   geometry: {
     type: "Polygon",
-    coordinates: [[
-      [-179.9, -62], [179.9, -62], [179.9, 82], [-179.9, 82], [-179.9, -62],
-    ]],
+    coordinates: [[[-179.9, -62], [179.9, -62], [179.9, 82], [-179.9, 82], [-179.9, -62]]],
   },
   properties: {},
 };
 
-interface TF { x: number; y: number; k: number }
+// Approximate card bounding box for overlap detection
+const CARD_W = 94;  // px
+const CARD_H = 56;  // px (label + stem + dot)
+const CARD_GAP = 8; // minimum gap between cards
+
 interface Pin { country: GalleryCountry; svgX: number; svgY: number }
+interface ResolvedPin extends Pin { sx: number; sy: number }
 
 interface Props {
   countries: GalleryCountry[];
@@ -37,29 +37,56 @@ interface Props {
   interactive: boolean;
 }
 
+/** Push overlapping card positions apart (vertical separation, western card goes up). */
+function resolveOverlaps(items: ResolvedPin[]): ResolvedPin[] {
+  const out = items.map((p) => ({ ...p }));
+  const minDist = CARD_H + CARD_GAP;
+
+  for (let pass = 0; pass < 10; pass++) {
+    let changed = false;
+    for (let i = 0; i < out.length; i++) {
+      for (let j = i + 1; j < out.length; j++) {
+        if (Math.abs(out[i].sx - out[j].sx) >= CARD_W) continue;
+        const overlap = minDist - Math.abs(out[i].sy - out[j].sy);
+        if (overlap <= 0) continue;
+        const shift = overlap / 2 + 1;
+        // western card (smaller sx) moves up; eastern moves down
+        if (out[i].sx <= out[j].sx) {
+          out[i].sy -= shift;
+          out[j].sy += shift;
+        } else {
+          out[i].sy += shift;
+          out[j].sy -= shift;
+        }
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  return out;
+}
+
 export function WorldMapView({ countries, onSelectCountry, interactive }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const tfRef = useRef<TF>({ x: 0, y: 0, k: 1 });
-  const [tf, setTf] = useState<TF>({ x: 0, y: 0, k: 1 });
   const [worldPaths, setWorldPaths] = useState<{ id: string; d: string }[]>([]);
   const [pins, setPins] = useState<Pin[]>([]);
   const [showPins, setShowPins] = useState(false);
-  const [grabbing, setGrabbing] = useState(false);
-  const dragRef = useRef<{ startX: number; startY: number; startTx: number; startTy: number } | null>(null);
-  const zoomTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Resize counter — forces re-render so card positions recalculate
+  const [, setTick] = useState(0);
   const countrySet = new Set(countries.map((c) => c.isoNumeric));
 
-  function svgToContainer(svgX: number, svgY: number, cur: TF): [number, number] {
+  /** SVG viewBox coords → container-relative screen px (no user transform). */
+  function svgToScreen(svgX: number, svgY: number): [number, number] {
     const el = containerRef.current;
     if (!el) return [0, 0];
     const { width: W, height: H } = el.getBoundingClientRect();
     const s = Math.min(W / VW, H / VH);
     const ox = (W - VW * s) / 2;
     const oy = (H - VH * s) / 2;
-    return [(svgX * cur.k + cur.x) * s + ox, (svgY * cur.k + cur.y) * s + oy];
+    return [svgX * s + ox, svgY * s + oy];
   }
 
-  // Load world atlas
+  // Load atlas once
   useEffect(() => {
     fetch(ATLAS_URL)
       .then((r) => r.json())
@@ -98,82 +125,22 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Wheel zoom (non-passive)
+  // Watch container resize → recalculate card positions
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const ro = new ResizeObserver(() => setTick((n) => n + 1));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
-    function onWheel(e: WheelEvent) {
-      if (!interactive) return;
-      e.preventDefault();
-      const { width: W, height: H, left, top } = el!.getBoundingClientRect();
-      const s = Math.min(W / VW, H / VH);
-      const ox = (W - VW * s) / 2;
-      const oy = (H - VH * s) / 2;
-      const cur = tfRef.current;
-
-      const mx = (e.clientX - left - ox) / s;
-      const my = (e.clientY - top - oy) / s;
-      const gx = (mx - cur.x) / cur.k;
-      const gy = (my - cur.y) / cur.k;
-
-      const factor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
-      const newK = Math.max(MIN_K, Math.min(MAX_K, cur.k * factor));
-      const newTf: TF = { x: mx - gx * newK, y: my - gy * newK, k: newK };
-
-      tfRef.current = newTf;
-      setTf({ ...newTf });
-      setShowPins(false);
-      if (zoomTimer.current) clearTimeout(zoomTimer.current);
-      zoomTimer.current = setTimeout(() => setShowPins(true), 520);
-    }
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      if (zoomTimer.current) clearTimeout(zoomTimer.current);
-    };
-  // re-bind when interactive changes so the guard fires correctly
-  }, [interactive]);
-
-  // Window-level mouse events for drag
-  useEffect(() => {
-    function onMove(e: MouseEvent) {
-      if (!dragRef.current || !interactive) return;
-      const el = containerRef.current;
-      if (!el) return;
-      const { width: W, height: H } = el.getBoundingClientRect();
-      const s = Math.min(W / VW, H / VH);
-      const newTf: TF = {
-        ...tfRef.current,
-        x: dragRef.current.startTx + (e.clientX - dragRef.current.startX) / s,
-        y: dragRef.current.startTy + (e.clientY - dragRef.current.startY) / s,
-      };
-      tfRef.current = newTf;
-      setTf({ ...newTf });
-    }
-    function onUp() {
-      dragRef.current = null;
-      setGrabbing(false);
-    }
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [interactive]);
-
-  function onMouseDown(e: React.MouseEvent) {
-    if (!interactive) return;
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startTx: tfRef.current.x,
-      startTy: tfRef.current.y,
-    };
-    setGrabbing(true);
-  }
+  // Compute screen positions and resolve overlaps every render
+  const resolvedPins: ResolvedPin[] = resolveOverlaps(
+    pins.map((p) => {
+      const [sx, sy] = svgToScreen(p.svgX, p.svgY);
+      return { ...p, sx, sy };
+    })
+  );
 
   const dark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
   const ocean  = dark ? "#0b0f14" : "#d6e8f5";
@@ -182,12 +149,8 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
   const border = dark ? "#252f3d" : "#aab8c4";
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full h-full select-none"
-      onMouseDown={onMouseDown}
-      style={{ cursor: interactive ? (grabbing ? "grabbing" : "grab") : "default" }}
-    >
+    <div ref={containerRef} className="relative w-full h-full select-none">
+      {/* Static SVG — scales with container via preserveAspectRatio */}
       <svg
         viewBox={`0 0 ${VW} ${VH}`}
         width="100%"
@@ -196,35 +159,33 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
         style={{ display: "block" }}
       >
         <rect width={VW} height={VH} fill={ocean} />
-        <g transform={`translate(${tf.x},${tf.y}) scale(${tf.k})`}>
+        <g>
           {worldPaths.map(({ id, d }) => (
             <path
               key={id}
               d={d}
               fill={countrySet.has(id) ? hiLand : land}
               stroke={border}
-              strokeWidth={0.5 / tf.k}
+              strokeWidth={0.5}
             />
           ))}
         </g>
       </svg>
 
+      {/* Country pin cards overlay */}
       <div className="absolute inset-0 pointer-events-none">
         <AnimatePresence>
           {showPins &&
-            pins.map(({ country, svgX, svgY }, i) => {
-              const [sx, sy] = svgToContainer(svgX, svgY, tf);
-              return (
-                <CountryCard
-                  key={country.isoNumeric}
-                  country={country}
-                  index={i}
-                  x={sx}
-                  y={sy}
-                  onSelect={interactive ? onSelectCountry : () => {}}
-                />
-              );
-            })}
+            resolvedPins.map(({ country, sx, sy }, i) => (
+              <CountryCard
+                key={country.isoNumeric}
+                country={country}
+                index={i}
+                x={sx}
+                y={sy}
+                onSelect={interactive ? onSelectCountry : () => {}}
+              />
+            ))}
         </AnimatePresence>
       </div>
     </div>

@@ -43,9 +43,16 @@ export function CountryCard({ country, index, x, y, onSelect }: CountryCardProps
           {country.totalPhotos}
         </p>
       </div>
-      {/* Stem / pin */}
-      <div className="w-px h-3 bg-neutral-400/60 dark:bg-neutral-500/60" />
-      <div className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-500 group-hover:bg-blue-500 transition-colors duration-200" />
+      {/* Stem */}
+      <div className="w-px h-3 bg-red-400/70" />
+      {/* Red sphere pin */}
+      <div
+        className="w-3 h-3 rounded-full flex-shrink-0 transition-transform duration-200 group-hover:scale-125"
+        style={{
+          background: "radial-gradient(circle at 36% 30%, #ff9090 0%, #e52222 48%, #7a0000 100%)",
+          boxShadow: "0 1px 6px rgba(180,0,0,0.55), inset 0 -1px 3px rgba(0,0,0,0.35)",
+        }}
+      />
     </motion.button>
   );
 }
