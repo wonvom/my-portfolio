@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { geoNaturalEarth1, geoPath } from "d3-geo";
 import * as topojson from "topojson-client";
 import { motion } from "motion/react";
@@ -17,10 +17,17 @@ interface Props {
   onSelectCity: (city: GalleryCity) => void;
 }
 
+interface CountrySvg { d: string; vw: number; vh: number }
+
 export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
-  const [countryPath, setCountryPath] = useState("");
+  const [svg, setSvg] = useState<CountrySvg | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const el = containerRef.current;
+    const vw = el ? el.clientWidth * 0.72 : 900;
+    const vh = el ? el.clientHeight * 0.55 : 480;
+
     fetch(ATLAS_URL)
       .then((r) => r.json())
       .then((topo: Topology) => {
@@ -30,32 +37,29 @@ export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
         ) as FeatureCollection<Geometry>;
 
         const feat = fc.features.find(
-          (f: Feature<Geometry>) =>
-            String((f as { id?: string | number }).id ?? "") === country.isoNumeric
+          (f) => String((f as { id?: string | number }).id ?? "") === country.isoNumeric
         ) as Feature<Geometry> | undefined;
 
-        if (feat) {
-          const w = typeof window !== "undefined" ? window.innerWidth : 1280;
-          const h = typeof window !== "undefined" ? window.innerHeight : 800;
-          const proj = geoNaturalEarth1().fitSize([w * 0.7, h * 0.7], feat);
-          const path = geoPath(proj);
-          setCountryPath(path(feat) ?? "");
-        }
+        if (!feat) return;
+        const proj = geoNaturalEarth1().fitSize([vw, vh], feat);
+        setSvg({ d: geoPath(proj)(feat) ?? "", vw, vh });
       })
       .catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country.isoNumeric]);
 
-  const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-  const landFill = isDark ? "#1e2d40" : "#c8d8e8";
-  const landStroke = isDark ? "#3a5070" : "#8090a0";
+  const dark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+  const fill   = dark ? "#1b2d45" : "#b8cfe0";
+  const stroke = dark ? "#2e5070" : "#7090a8";
 
   return (
     <motion.div
-      className="relative w-full h-full flex flex-col"
+      ref={containerRef}
+      className="relative w-full h-full flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      transition={{ duration: 0.45 }}
     >
       {/* Back button */}
       <motion.button
@@ -63,59 +67,52 @@ export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
           bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md
           border border-neutral-200 dark:border-neutral-700/60
           text-sm text-neutral-600 dark:text-neutral-400
-          hover:text-neutral-900 dark:hover:text-white transition-colors duration-200
-          shadow-sm"
+          hover:text-neutral-900 dark:hover:text-white transition-colors shadow-sm"
         onClick={onBack}
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.6 }}
+        transition={{ delay: 0.55, duration: 0.35 }}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
       >
-        <span className="text-base leading-none">←</span>
+        <span>←</span>
         <span>World Map</span>
       </motion.button>
 
       {/* Country name */}
       <motion.h1
-        className="absolute top-6 left-1/2 -translate-x-1/2 z-20 text-lg font-semibold tracking-wide
-          text-neutral-700 dark:text-neutral-300"
-        initial={{ opacity: 0, y: -10 }}
+        className="absolute top-6 left-1/2 -translate-x-1/2 z-20 text-base font-semibold
+          tracking-widest uppercase text-neutral-500 dark:text-neutral-400"
+        initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
         {country.name}
       </motion.h1>
 
-      {/* Country SVG outline */}
-      <div className="flex-1 flex items-center justify-center">
-        {countryPath && (
+      {/* Country outline */}
+      <div className="flex-1 flex items-center justify-center pt-16 pb-2 w-full">
+        {svg && (
           <motion.svg
-            width="70vw"
-            height="70vh"
-            viewBox={`0 0 ${typeof window !== "undefined" ? window.innerWidth * 0.7 : 900} ${typeof window !== "undefined" ? window.innerHeight * 0.7 : 560}`}
-            className="drop-shadow-2xl"
-            initial={{ scale: 0.3, opacity: 0 }}
+            width={svg.vw}
+            height={svg.vh}
+            viewBox={`0 0 ${svg.vw} ${svg.vh}`}
+            className="drop-shadow-2xl max-w-full max-h-full"
+            initial={{ scale: 0.25, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            <path
-              d={countryPath}
-              fill={landFill}
-              stroke={landStroke}
-              strokeWidth={1.5}
-              strokeLinejoin="round"
-            />
+            <path d={svg.d} fill={fill} stroke={stroke} strokeWidth={1.5} strokeLinejoin="round" />
           </motion.svg>
         )}
       </div>
 
-      {/* City cards */}
+      {/* City cards — scrollable row */}
       <motion.div
-        className="absolute bottom-8 left-0 right-0 px-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        className="w-full px-6 pb-8"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65, duration: 0.5 }}
       >
         <div className="flex gap-3 flex-wrap justify-center max-w-5xl mx-auto">
           {country.cities.map((city, i) => (

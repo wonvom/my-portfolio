@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { geoNaturalEarth1, geoPath, geoCentroid } from "d3-geo";
 import * as topojson from "topojson-client";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { CountryCard } from "./CountryCard";
 import type { GalleryCountry } from "@/types/gallery";
 import type { Topology, GeometryCollection } from "topojson-specification";
@@ -12,10 +12,11 @@ import type { Feature, FeatureCollection, Geometry } from "geojson";
 const ATLAS_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const VW = 960;
 const VH = 500;
+const MIN_K = 0.6;
+const MAX_K = 12;
 
-interface Transform { x: number; y: number; k: number }
-
-interface CountryPin { country: GalleryCountry; svgX: number; svgY: number }
+interface TF { x: number; y: number; k: number }
+interface Pin { country: GalleryCountry; svgX: number; svgY: number }
 
 interface Props {
   countries: GalleryCountry[];
@@ -23,142 +24,158 @@ interface Props {
 }
 
 export function WorldMapView({ countries, onSelectCountry }: Props) {
-  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const tfRef = useRef<TF>({ x: 0, y: 0, k: 1 });
+  const [tf, setTf] = useState<TF>({ x: 0, y: 0, k: 1 });
   const [worldPaths, setWorldPaths] = useState<{ id: string; d: string }[]>([]);
-  const [pins, setPins] = useState<CountryPin[]>([]);
+  const [pins, setPins] = useState<Pin[]>([]);
   const [showPins, setShowPins] = useState(false);
-  const [tf, setTf] = useState<Transform>({ x: 0, y: 0, k: 1 });
-  const dragging = useRef(false);
-  const dragStart = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
+  const [grabbing, setGrabbing] = useState(false);
+  const dragRef = useRef<{ startX: number; startY: number; startTx: number; startTy: number } | null>(null);
   const zoomTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const countrySet = new Set(countries.map((c) => c.isoNumeric));
 
+  // Helper: SVG viewBox coords → container-relative px
+  function svgToContainer(svgX: number, svgY: number, cur: TF): [number, number] {
+    const el = containerRef.current;
+    if (!el) return [0, 0];
+    const { width: W, height: H } = el.getBoundingClientRect();
+    const s = Math.min(W / VW, H / VH);
+    const ox = (W - VW * s) / 2;
+    const oy = (H - VH * s) / 2;
+    return [(svgX * cur.k + cur.x) * s + ox, (svgY * cur.k + cur.y) * s + oy];
+  }
+
+  // Load world atlas + compute pins
   useEffect(() => {
     fetch(ATLAS_URL)
       .then((r) => r.json())
       .then((topo: Topology) => {
         const proj = geoNaturalEarth1().scale(153).translate([VW / 2, VH / 2]);
-        const path = geoPath(proj);
+        const pathGen = geoPath(proj);
         const fc = topojson.feature(
           topo,
           topo.objects.countries as GeometryCollection
-        ) as FeatureCollection<Geometry, { name?: string }>;
+        ) as FeatureCollection<Geometry>;
 
-        const paths = fc.features.map((f: Feature<Geometry>) => ({
-          id: String((f as { id?: string | number }).id ?? ""),
-          d: path(f) ?? "",
-        }));
-        setWorldPaths(paths);
+        setWorldPaths(
+          fc.features.map((f) => ({
+            id: String((f as { id?: string | number }).id ?? ""),
+            d: pathGen(f) ?? "",
+          }))
+        );
 
-        // Calculate pin positions
-        const newPins: CountryPin[] = [];
+        const newPins: Pin[] = [];
         for (const country of countries) {
           const feat = fc.features.find(
-            (f: Feature<Geometry>) => String((f as { id?: string | number }).id ?? "") === country.isoNumeric
-          );
+            (f) => String((f as { id?: string | number }).id ?? "") === country.isoNumeric
+          ) as Feature<Geometry> | undefined;
           if (feat) {
-            const centroid = proj(geoCentroid(feat) as [number, number]);
-            if (centroid) {
-              newPins.push({ country, svgX: centroid[0], svgY: centroid[1] });
-            }
+            const c = proj(geoCentroid(feat) as [number, number]);
+            if (c) newPins.push({ country, svgX: c[0], svgY: c[1] });
           }
         }
-        // Sort by svgX for left-to-right wave
         newPins.sort((a, b) => a.svgX - b.svgX);
         setPins(newPins);
-
-        setTimeout(() => setShowPins(true), 400);
+        setTimeout(() => setShowPins(true), 450);
       })
       .catch(console.error);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Convert SVG coords → screen coords considering current transform
-  const svgToScreen = useCallback((svgX: number, svgY: number): [number, number] => {
-    const el = containerRef.current;
-    if (!el) return [0, 0];
-    const { width: W, height: H } = el.getBoundingClientRect();
-    const scale = Math.min(W / VW, H / VH);
-    const ox = (W - VW * scale) / 2;
-    const oy = (H - VH * scale) / 2;
-    const tx = (svgX * tf.k + tf.x) * scale + ox;
-    const ty = (svgY * tf.k + tf.y) * scale + oy;
-    return [tx, ty];
-  }, [tf]);
-
-  // Wheel zoom toward cursor
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const el = containerRef.current;
-    if (!el) return;
-    const { width: W, height: H, left, top } = el.getBoundingClientRect();
-    const scale = Math.min(W / VW, H / VH);
-    const ox = (W - VW * scale) / 2;
-    const oy = (H - VH * scale) / 2;
-
-    // Mouse in SVG viewBox coords
-    const mx = (e.clientX - left - ox) / scale;
-    const my = (e.clientY - top - oy) / scale;
-
-    // Mouse in group (pre-transform) coords
-    const gx = (mx - tf.x) / tf.k;
-    const gy = (my - tf.y) / tf.k;
-
-    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
-    const newK = Math.max(0.6, Math.min(12, tf.k * factor));
-    const newX = mx - gx * newK;
-    const newY = my - gy * newK;
-
-    setTf({ x: newX, y: newY, k: newK });
-
-    setShowPins(false);
-    if (zoomTimer.current) clearTimeout(zoomTimer.current);
-    zoomTimer.current = setTimeout(() => setShowPins(true), 500);
-  }, [tf]);
-
+  // Wheel zoom (registered as non-passive to allow preventDefault)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, [handleWheel]);
+
+    function onWheel(e: WheelEvent) {
+      e.preventDefault();
+      const { width: W, height: H, left, top } = el!.getBoundingClientRect();
+      const s = Math.min(W / VW, H / VH);
+      const ox = (W - VW * s) / 2;
+      const oy = (H - VH * s) / 2;
+      const cur = tfRef.current;
+
+      // Cursor in SVG viewBox space
+      const mx = (e.clientX - left - ox) / s;
+      const my = (e.clientY - top - oy) / s;
+      // Cursor in group-local space (pre-transform)
+      const gx = (mx - cur.x) / cur.k;
+      const gy = (my - cur.y) / cur.k;
+
+      const factor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
+      const newK = Math.max(MIN_K, Math.min(MAX_K, cur.k * factor));
+      const newTf: TF = { x: mx - gx * newK, y: my - gy * newK, k: newK };
+
+      tfRef.current = newTf;
+      setTf({ ...newTf });
+      setShowPins(false);
+      if (zoomTimer.current) clearTimeout(zoomTimer.current);
+      zoomTimer.current = setTimeout(() => setShowPins(true), 520);
+    }
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      if (zoomTimer.current) clearTimeout(zoomTimer.current);
+    };
+  }, []);
+
+  // Mouse drag — attach to window so releasing outside still clears state
+  useEffect(() => {
+    function onMove(e: MouseEvent) {
+      if (!dragRef.current) return;
+      const el = containerRef.current;
+      if (!el) return;
+      const { width: W, height: H } = el.getBoundingClientRect();
+      const s = Math.min(W / VW, H / VH);
+      const dx = (e.clientX - dragRef.current.startX) / s;
+      const dy = (e.clientY - dragRef.current.startY) / s;
+      const newTf: TF = {
+        ...tfRef.current,
+        x: dragRef.current.startTx + dx,
+        y: dragRef.current.startTy + dy,
+      };
+      tfRef.current = newTf;
+      setTf({ ...newTf });
+    }
+    function onUp() {
+      dragRef.current = null;
+      setGrabbing(false);
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
 
   function onMouseDown(e: React.MouseEvent) {
-    dragging.current = true;
-    dragStart.current = { x: e.clientX, y: e.clientY, tx: tf.x, ty: tf.y };
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startTx: tfRef.current.x,
+      startTy: tfRef.current.y,
+    };
+    setGrabbing(true);
   }
-  function onMouseMove(e: React.MouseEvent) {
-    if (!dragging.current) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    const el = containerRef.current;
-    if (!el) return;
-    const { width: W, height: H } = el.getBoundingClientRect();
-    const scale = Math.min(W / VW, H / VH);
-    setTf((prev) => ({ ...prev, x: dragStart.current.tx + dx / scale, y: dragStart.current.ty + dy / scale }));
-  }
-  function onMouseUp() { dragging.current = false; }
 
-  const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-  const ocean = isDark ? "#0d1117" : "#e8f0fe";
-  const land = isDark ? "#1e2430" : "#d4d8dd";
-  const highlight = isDark ? "#2e3d52" : "#a8b8cc";
-  const border = isDark ? "#2a3040" : "#b8bec8";
+  // Theme-aware colors
+  const dark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+  const ocean  = dark ? "#0b0f14" : "#dde8f5";
+  const land   = dark ? "#1a2130" : "#cdd4da";
+  const hiLand = dark ? "#243550" : "#96adc0";
+  const border = dark ? "#252f3d" : "#b0bbc5";
 
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full select-none"
       onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp}
-      style={{ cursor: dragging.current ? "grabbing" : "grab" }}
+      style={{ cursor: grabbing ? "grabbing" : "grab" }}
     >
       <svg
-        ref={svgRef}
         viewBox={`0 0 ${VW} ${VH}`}
         width="100%"
         height="100%"
@@ -171,7 +188,7 @@ export function WorldMapView({ countries, onSelectCountry }: Props) {
             <path
               key={id}
               d={d}
-              fill={countrySet.has(id) ? highlight : land}
+              fill={countrySet.has(id) ? hiLand : land}
               stroke={border}
               strokeWidth={0.5 / tf.k}
             />
@@ -179,12 +196,12 @@ export function WorldMapView({ countries, onSelectCountry }: Props) {
         </g>
       </svg>
 
-      {/* Country pins overlay */}
+      {/* Country pin cards */}
       <div className="absolute inset-0 pointer-events-none">
         <AnimatePresence>
           {showPins &&
             pins.map(({ country, svgX, svgY }, i) => {
-              const [sx, sy] = svgToScreen(svgX, svgY);
+              const [sx, sy] = svgToContainer(svgX, svgY, tf);
               return (
                 <CountryCard
                   key={country.isoNumeric}
