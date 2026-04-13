@@ -176,10 +176,14 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: i * 0.13, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            whileHover={{ rotate: [0, -4, 4, -3, 3, -1, 0] }}
             onClick={() => interactive && onSelectCountry(country)}
             onMouseEnter={() => setHoveredId(country.isoNumeric)}
             onMouseLeave={() => setHoveredId(null)}
-            style={{ cursor: interactive ? "pointer" : "default" }}
+            style={{
+              cursor: interactive ? "pointer" : "default",
+              transformOrigin: `${cx}px ${cy}px`,
+            }}
           >
             {/* Diagonal leader line: box corner → sphere surface */}
             <line x1={ex} y1={ey} x2={x2} y2={y2}
