@@ -141,10 +141,17 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
         <filter id="pinGlow" x="-120%" y="-120%" width="340%" height="340%">
           <feDropShadow dx="0" dy="0.5" stdDeviation="1.5" floodColor="rgba(150,0,0,0.5)" />
         </filter>
-        {/* Label drop-shadow */}
-        <filter id="labelShadow" x="-15%" y="-25%" width="130%" height="175%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2.5"
-            floodColor={dark ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0.18)"} />
+        {/* Label drop-shadow — feGaussianBlur chain avoids feDropShadow compat issues */}
+        <filter id="labelShadow" x="-15%" y="-30%" width="130%" height="185%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="blur" />
+          <feOffset in="blur" dx="0" dy="2.5" result="shifted" />
+          <feComponentTransfer in="shifted" result="shadow">
+            <feFuncA type="linear" slope={dark ? 0.5 : 0.18} />
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode in="shadow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
 
