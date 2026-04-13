@@ -69,7 +69,6 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
   const [worldPaths, setWorldPaths] = useState<{ id: string; d: string }[]>([]);
   const [pins, setPins] = useState<Pin[]>([]);
   const [showPins, setShowPins] = useState(false);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const countrySet = new Set(countries.map((c) => c.isoNumeric));
 
   useEffect(() => {
@@ -111,16 +110,19 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
   }, []);
 
   const col = {
-    ocean:       dark ? "#0b0f14" : "#d6e8f5",
-    land:        dark ? "#1c2535" : "#cdd4da",
-    hiLand:      dark ? "#233248" : "#94acc2",
-    border:      dark ? "#252f3d" : "#aab8c4",
-    labelBg:     dark ? "rgba(14,19,30,0.93)" : "rgba(255,255,255,0.93)",
-    labelBgHov:  dark ? "rgba(28,42,62,0.97)" : "rgba(230,240,255,0.97)",
-    labelStroke: dark ? "rgba(255,255,255,0.13)" : "rgba(0,0,0,0.13)",
-    nameText:    dark ? "#f0f0f0" : "#111111",
-    subText:     dark ? "#606060" : "#888888",
-    line:        dark ? "rgba(200,205,215,0.75)" : "rgba(25,25,25,0.72)",
+    ocean:    dark ? "#0b0f14" : "#d6e8f5",
+    land:     dark ? "#1c2535" : "#cdd4da",
+    hiLand:   dark ? "#233248" : "#94acc2",
+    border:   dark ? "#252f3d" : "#aab8c4",
+    nameText: dark ? "#f0f0f0" : "#111111",
+    subText:  dark ? "#9a9a9a" : "#777777",
+    line:     dark ? "rgba(200,205,215,0.75)" : "rgba(25,25,25,0.72)",
+    // liquid glass
+    glassBg:     dark ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.52)",
+    glassBorder: dark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.09)",
+    glassShadow: dark
+      ? "0 4px 20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.10)"
+      : "0 4px 20px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.95)",
   };
 
   return (
@@ -162,9 +164,8 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
         const ly = cy + dy;
         const [ex, ey] = innerCorner(lx, ly, dx, dy);
         const name = DISPLAY_NAME[country.isoNumeric] ?? country.name;
-        const hov  = hoveredId === country.isoNumeric;
 
-        // Shorten line so arrowhead tip lands exactly on the sphere surface
+        // Line endpoint: touch sphere surface exactly
         const vx = cx - ex, vy = cy - ey;
         const len = Math.hypot(vx, vy) || 1;
         const x2 = cx - (vx / len) * PIN_R;
@@ -176,45 +177,75 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: i * 0.13, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            whileHover={{ rotate: [0, -4, 4, -3, 3, -1, 0] }}
             onClick={() => interactive && onSelectCountry(country)}
-            onMouseEnter={() => setHoveredId(country.isoNumeric)}
-            onMouseLeave={() => setHoveredId(null)}
-            style={{
-              cursor: interactive ? "pointer" : "default",
-              transformOrigin: `${cx}px ${cy}px`,
-            }}
+            style={{ cursor: interactive ? "pointer" : "default" }}
           >
-            {/* Diagonal leader line: box corner → sphere surface */}
+            {/* Static: leader line */}
             <line x1={ex} y1={ey} x2={x2} y2={y2}
               stroke={col.line} strokeWidth={0.6} />
 
-            {/* Label box */}
-            <rect
-              x={lx - LW / 2} y={ly - LH / 2} width={LW} height={LH} rx={4}
-              fill={hov ? col.labelBgHov : col.labelBg}
-              stroke={col.labelStroke} strokeWidth={0.5}
-            />
-
-            {/* Country name */}
-            <text x={lx} y={ly - 2.5}
-              textAnchor="middle" dominantBaseline="middle"
-              fontSize={8} fontWeight={600} fill={col.nameText}
-              fontFamily="var(--font-geist-sans)">
-              {name}
-            </text>
-
-            {/* Photo count */}
-            <text x={lx} y={ly + 6.5}
-              textAnchor="middle" dominantBaseline="middle"
-              fontSize={5.5} fill={col.subText}
-              fontFamily="var(--font-geist-sans)">
-              {country.totalPhotos} photo{country.totalPhotos !== 1 ? "s" : ""}
-            </text>
-
-            {/* Red 3-D sphere — exact centroid, rendered on top */}
+            {/* Static: red 3-D sphere */}
             <circle cx={cx} cy={cy} r={PIN_R}
               fill="url(#pinSphere)" filter="url(#pinGlow)" />
+
+            {/* Label only — liquid glass, scales on hover */}
+            <motion.g
+              whileHover={{ scale: 1.12 }}
+              transition={{ type: "spring", stiffness: 380, damping: 22 }}
+              style={{ transformOrigin: `${lx}px ${ly}px` }}
+            >
+              <foreignObject
+                x={lx - LW / 2} y={ly - LH / 2}
+                width={LW} height={LH}
+                style={{ overflow: "visible" }}
+              >
+                <div
+                  style={{
+                    width: LW,
+                    height: LH,
+                    borderRadius: 5,
+                    border: `0.5px solid ${col.glassBorder}`,
+                    background: col.glassBg,
+                    backdropFilter: "blur(12px) saturate(1.4)",
+                    WebkitBackdropFilter: "blur(12px) saturate(1.4)",
+                    boxShadow: col.glassShadow,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 2,
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Top specular shimmer */}
+                  <div style={{
+                    position: "absolute",
+                    top: 0, left: "10%", right: "10%", height: 1,
+                    background: dark
+                      ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)"
+                      : "linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent)",
+                  }} />
+                  <p style={{
+                    margin: 0, lineHeight: 1,
+                    fontSize: 8, fontWeight: 600,
+                    color: col.nameText,
+                    fontFamily: "var(--font-geist-sans)",
+                    letterSpacing: "0.01em",
+                  }}>
+                    {name}
+                  </p>
+                  <p style={{
+                    margin: 0, lineHeight: 1,
+                    fontSize: 5.5,
+                    color: col.subText,
+                    fontFamily: "var(--font-geist-sans)",
+                  }}>
+                    {country.totalPhotos} photo{country.totalPhotos !== 1 ? "s" : ""}
+                  </p>
+                </div>
+              </foreignObject>
+            </motion.g>
           </motion.g>
         );
       })}
