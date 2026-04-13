@@ -55,10 +55,7 @@ export function CityCard({ city, index, onSelect }: CityCardProps) {
       </div>
 
       {/* Info */}
-      <div
-        className="p-3 transition-colors duration-200"
-        style={hovered ? { backgroundColor: "var(--city-card-hover)" } : undefined}
-      >
+      <div className="p-3 transition-colors duration-200">
         <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 truncate">
           {city.name}
         </p>

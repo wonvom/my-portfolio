@@ -76,7 +76,7 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
     fetch(ATLAS_URL)
       .then((r) => r.json())
       .then((topo: Topology) => {
-        const proj = geoMercator().fitSize([VW, VH], WORLD_CLIP as GeoJSON.Feature).precision(0.1);
+        const proj = geoMercator().fitExtent([[0, 14], [VW, VH - 4]], WORLD_CLIP as GeoJSON.Feature).precision(0.1);
         const pathGen = geoPath(proj);
         const fc = topojson.feature(
           topo,
@@ -129,7 +129,7 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
       width="100%"
       height="100%"
       preserveAspectRatio="xMidYMid meet"
-      style={{ display: "block" }}
+      style={{ display: "block", backgroundColor: col.ocean }}
     >
       <defs>
         {/* 3-D red sphere */}
@@ -141,11 +141,6 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
         <filter id="pinGlow" x="-120%" y="-120%" width="340%" height="340%">
           <feDropShadow dx="0" dy="0.5" stdDeviation="1.5" floodColor="rgba(150,0,0,0.5)" />
         </filter>
-        {/* Arrowhead — tip placed at sphere surface, color matches line */}
-        <marker id="arrow" viewBox="0 0 8 6" refX="8" refY="3"
-          markerWidth="4" markerHeight="3" orient="auto">
-          <path d="M0,0 L8,3 L0,6 Z" fill={col.line} />
-        </marker>
       </defs>
 
       {/* Ocean background */}
@@ -188,8 +183,7 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
           >
             {/* Diagonal leader line: box corner → sphere surface */}
             <line x1={ex} y1={ey} x2={x2} y2={y2}
-              stroke={col.line} strokeWidth={0.6}
-              markerEnd="url(#arrow)" />
+              stroke={col.line} strokeWidth={0.6} />
 
             {/* Label box */}
             <rect

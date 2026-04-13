@@ -5,6 +5,7 @@ import { geoNaturalEarth1, geoPath } from "d3-geo";
 import * as topojson from "topojson-client";
 import { motion } from "motion/react";
 import { CityCard } from "./CityCard";
+import { useTheme } from "@/providers/ThemeProvider";
 import type { GalleryCountry, GalleryCity } from "@/types/gallery";
 import type { Topology, GeometryCollection } from "topojson-specification";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
@@ -20,6 +21,7 @@ interface Props {
 interface CountrySvg { d: string; vw: number; vh: number }
 
 export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
+  const { theme } = useTheme();
   const [svg, setSvg] = useState<CountrySvg | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +50,7 @@ export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country.isoNumeric]);
 
-  const dark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+  const dark = theme === "dark";
   const fill   = dark ? "#1b2d45" : "#b8cfe0";
   const stroke = dark ? "#2e5070" : "#7090a8";
 
