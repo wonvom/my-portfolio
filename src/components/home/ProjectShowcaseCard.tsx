@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "motion/react";
 import { CodePreview } from "@/components/ui/CodePreview";
 import type { Project } from "@/types/project";
@@ -10,32 +9,26 @@ type ProjectShowcaseCardProps = {
   project: Project;
 };
 
-function ImagePreview({ src, alt }: { src?: string; alt: string }) {
-  if (src) {
-    return (
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, 33vw"
-      />
-    );
-  }
+function PreviewBanner({ text }: { text?: string }) {
   return (
-    <div className="absolute inset-0 bg-gradient-to-br from-neutral-200/80 dark:from-neutral-800/60 to-neutral-300/60 dark:to-neutral-900/80 flex flex-col items-center justify-center gap-2">
+    <div className="absolute inset-0 flex items-center justify-center bg-neutral-50 dark:bg-neutral-900/80">
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
+            "linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
         }}
       />
-      <span className="relative text-xs text-neutral-400 dark:text-neutral-600 font-mono tracking-widest uppercase">
-        [ Preview ]
-      </span>
-      <span className="relative text-[10px] text-neutral-400 dark:text-neutral-700">{alt}</span>
+      {text ? (
+        <p className="relative text-xl font-bold text-neutral-800 dark:text-neutral-100 tracking-tight text-center px-6 leading-snug">
+          {text}
+        </p>
+      ) : (
+        <span className="relative text-xs text-neutral-400 dark:text-neutral-600 font-mono tracking-widest uppercase">
+          [ Preview ]
+        </span>
+      )}
     </div>
   );
 }
@@ -55,9 +48,9 @@ export function ProjectShowcaseCard({ project }: ProjectShowcaseCardProps) {
         hover:border-black/[0.14] dark:hover:border-white/[0.14] transition-colors duration-300
       "
     >
-      {/* Image preview */}
-      <div className="relative h-36 w-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 shrink-0">
-        <ImagePreview src={project.imageUrl} alt={project.imageAlt ?? project.title} />
+      {/* Preview banner */}
+      <div className="relative h-36 w-full overflow-hidden shrink-0">
+        <PreviewBanner text={project.preview} />
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/90 dark:from-[#0d0e18] to-transparent" />
       </div>
 

@@ -18,6 +18,7 @@ export const projects: Project[] = [
     tags: ["Python", "데이터 자동화", "이진 탐색", "시각화", "matplotlib", "pandas"],
     relatedRoles: ["데이터 엔지니어", "SW 개발자"],
     featured: true,
+    preview: "수일 → 30분",
     imageUrl: "/battery-electrode.svg",
     imageAlt: "배터리 전극 절연막 단면 구조도",
     imageGallery: [],
@@ -86,6 +87,7 @@ def find_average_thickness(file_path, time_str):
     tags: ["Google Cloud BigQuery", "SQL", "ADS-B", "FAA", "데이터 통합"],
     relatedRoles: ["데이터 엔지니어", "백엔드 개발자"],
     featured: true,
+    preview: "흩어진 하늘을 하나의 테이블로",
     imageAlt: "BigQuery 항공 데이터 통합 아키텍처",
     imageGallery: [],
     codeSnippet: {
@@ -122,6 +124,7 @@ ORDER BY a.timestamp ASC`,
     tags: ["Spring", "Java", "Android", "iOS", "MySQL", "REST API"],
     relatedRoles: ["백엔드 개발자", "SW 개발자"],
     featured: true,
+    preview: "웹 / Android / iOS, 처음부터 끝까지",
     imageAlt: "홈쇼핑 서비스 화면 (웹/모바일)",
     imageGallery: [],
     codeSnippet: {

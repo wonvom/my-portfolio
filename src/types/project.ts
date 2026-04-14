@@ -25,4 +25,5 @@ export type Project = {
   codeSnippet?: CodeSnippet;
   codeSnippets?: CodeSnippet[];
   diagram?: string;
+  preview?: string;
 };

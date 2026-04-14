@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "motion/react";
 import { CodePreview } from "@/components/ui/CodePreview";
 import { TechBadge } from "@/components/ui/TechBadge";
@@ -12,26 +11,6 @@ type ProjectDetailLayoutProps = {
   project: Project;
 };
 
-function ImageGalleryPlaceholder({ alt }: { alt: string }) {
-  return (
-    <div className="relative h-52 w-full rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-black/[0.07] dark:border-white/[0.07]">
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-        <span className="text-xs text-neutral-400 dark:text-neutral-600 font-mono tracking-widest uppercase">
-          [ Image Placeholder ]
-        </span>
-        <span className="text-[10px] text-neutral-400 dark:text-neutral-700">{alt}</span>
-      </div>
-    </div>
-  );
-}
 
 export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
   return (
@@ -110,25 +89,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
           </div>
         </Section>
 
-        <Section title="Image Gallery" label="스크린샷 / 다이어그램">
-          {project.imageGallery && project.imageGallery.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {project.imageGallery.map((src, i) => (
-                <div key={i} className="relative h-48 w-full rounded-xl overflow-hidden border border-black/[0.07] dark:border-white/[0.07]">
-                  <Image src={src} alt={`${project.title} image ${i + 1}`} fill className="object-cover" />
-                </div>
-              ))}
-            </div>
-          ) : project.imageUrl ? (
-            <div className="relative w-full rounded-xl overflow-hidden border border-black/[0.07] dark:border-white/[0.07]">
-              <Image src={project.imageUrl} alt={project.imageAlt ?? project.title} width={800} height={480} className="w-full h-auto" />
-            </div>
-          ) : (
-            <ImageGalleryPlaceholder alt={project.imageAlt ?? project.title} />
-          )}
-        </Section>
-
-        {project.diagram && (
+{project.diagram && (
           <Section title="Diagram" label="아키텍처 다이어그램">
             <MermaidDiagram chart={project.diagram} />
           </Section>
