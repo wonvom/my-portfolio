@@ -1,29 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:is(.dark, .dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* Theme CSS variables */
+:root {
+  --theme-bg: #f5f5f7;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --theme-bg: #07070f;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ─── Syntax highlighting — Light mode (VS Code Light+) ─── */
+.sh-keyword    { color: #0000ff; }
+.sh-string     { color: #a31515; }
+.sh-comment    { color: #008000; font-style: italic; }
+.sh-number     { color: #098658; }
+.sh-identifier { color: #001080; }
+.sh-property   { color: #0070c1; }
+.sh-class      { color: #267f99; }
+.sh-sign       { color: #383a42; }
+.sh-jsxliterals{ color: #800000; }
+.sh-entity     { color: #795e26; }
+
+/* ─── Syntax highlighting — Dark mode (Tokyo Night) ─── */
+.dark .sh-keyword    { color: #bb9af7; }
+.dark .sh-string     { color: #9ece6a; }
+.dark .sh-comment    { color: #565f89; font-style: italic; }
+.dark .sh-number     { color: #ff9e64; }
+.dark .sh-identifier { color: #c0caf5; }
+.dark .sh-property   { color: #73daca; }
+.dark .sh-class      { color: #e0af68; }
+.dark .sh-sign       { color: #89ddff; }
+.dark .sh-jsxliterals{ color: #f7768e; }
+.dark .sh-entity     { color: #7aa2f7; }
 
 /* Custom cursor: hide default pointer on desktop */
 @media (pointer: fine) {

@@ -1,13 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { useRef } from "react";
 import {
   motion,
   useMotionValue,
   useSpring,
   useMotionTemplate,
 } from "motion/react";
-import type { LandingCard } from "@/types/landing";
+import { useTheme } from "@/providers/ThemeProvider";
+import type { LandingCard, Language } from "@/types/landing";
 
 export const cardVariants = {
   hidden: { opacity: 0, scale: 0.88, y: 20 },
@@ -21,9 +22,14 @@ export const cardVariants = {
 
 type NavCardProps = {
   card: LandingCard;
+  lang: Language;
+  onExpand: (rect: DOMRect, href: string) => void;
 };
 
-export function NavCard({ card }: NavCardProps) {
+export function NavCard({ card, lang, onExpand }: NavCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
+
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
   const highlightX = useMotionValue(50);
@@ -32,7 +38,11 @@ export function NavCard({ card }: NavCardProps) {
   const springRotateX = useSpring(rotateX, { stiffness: 280, damping: 28 });
   const springRotateY = useSpring(rotateY, { stiffness: 280, damping: 28 });
 
-  const highlightBg = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(255,255,255,0.13) 0%, transparent 65%)`;
+  // Two templates always created — hooks must be unconditional
+  const highlightBgDark = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(255,255,255,0.13) 0%, transparent 65%)`;
+  const highlightBgLight = useMotionTemplate`radial-gradient(circle at ${highlightX}% ${highlightY}%, rgba(0,0,0,0.08) 0%, transparent 65%)`;
+
+  const highlightBg = theme === "dark" ? highlightBgDark : highlightBgLight;
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -53,36 +63,39 @@ export function NavCard({ card }: NavCardProps) {
     highlightY.set(50);
   }
 
+  function handleInternalClick() {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (rect) onExpand(rect, card.href);
+  }
+
   const cardContent = (
     <div
       className="
         w-full h-full rounded-[30%] relative overflow-hidden
-        bg-white/[0.055] backdrop-blur-2xl
-        border border-white/[0.11]
-        shadow-[0_8px_32px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.11)]
+        bg-white/[0.08] dark:bg-white/[0.055] backdrop-blur-2xl
+        border border-black/[0.1] dark:border-white/[0.11]
+        shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.8)]
+        dark:shadow-[0_8px_32px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.11)]
         flex flex-col items-center justify-center gap-1.5 p-6
       "
     >
-      {/* Moving highlight */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ background: highlightBg }}
       />
-      {/* Top edge gleam */}
-      <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      {/* Label */}
-      <span className="relative text-white font-medium text-lg sm:text-xl tracking-wide select-none">
+      <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-black/[0.06] dark:via-white/20 to-transparent" />
+      <span className="relative text-neutral-900 dark:text-white font-medium text-lg sm:text-xl tracking-wide select-none">
         {card.label}
       </span>
-      {/* Description */}
       <span className="relative text-neutral-500 text-xs tracking-wide select-none">
-        {card.description}
+        {card.description[lang]}
       </span>
     </div>
   );
 
   return (
     <motion.div
+      ref={cardRef}
       className="aspect-square w-full"
       variants={cardVariants}
       style={{
@@ -107,9 +120,13 @@ export function NavCard({ card }: NavCardProps) {
           {cardContent}
         </a>
       ) : (
-        <Link href={card.href} className="block w-full h-full" aria-label={card.label}>
+        <button
+          onClick={handleInternalClick}
+          className="block w-full h-full bg-transparent border-none p-0"
+          aria-label={card.label}
+        >
           {cardContent}
-        </Link>
+        </button>
       )}
     </motion.div>
   );

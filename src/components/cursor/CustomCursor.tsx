@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
+import { useTheme } from "@/providers/ThemeProvider";
 
 export function CustomCursor() {
   const x = useMotionValue(-100);
@@ -9,14 +10,18 @@ export function CustomCursor() {
   const [hasFinePointer, setHasFinePointer] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const { theme } = useTheme();
 
   const springX = useSpring(x, { stiffness: 500, damping: 35 });
   const springY = useSpring(y, { stiffness: 500, damping: 35 });
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: fine)");
+    const updatePointer = () => setHasFinePointer(mq.matches);
+    mq.addEventListener("change", updatePointer);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasFinePointer(mq.matches);
-    if (!mq.matches) return;
+    if (!mq.matches) return () => mq.removeEventListener("change", updatePointer);
 
     let moveTimer: ReturnType<typeof setTimeout>;
 
@@ -56,6 +61,8 @@ export function CustomCursor() {
 
   const scale = isHovering ? 2.2 : isMoving ? 1.35 : 1;
 
+  const isDark = theme === "dark";
+
   return (
     <motion.div
       className="fixed top-0 left-0 pointer-events-none z-[9999]"
@@ -67,7 +74,11 @@ export function CustomCursor() {
       }}
     >
       <motion.div
-        className="w-3.5 h-3.5 rounded-full bg-white/80 shadow-[0_0_10px_3px_rgba(255,255,255,0.3)]"
+        className={
+          isDark
+            ? "w-3.5 h-3.5 rounded-full bg-white/80 shadow-[0_0_10px_3px_rgba(255,255,255,0.3)]"
+            : "w-3.5 h-3.5 rounded-full bg-neutral-900/85 shadow-[0_0_10px_3px_rgba(0,0,0,0.18)]"
+        }
         animate={{ scale }}
         transition={{ duration: 0.18, ease: "easeOut" }}
       />

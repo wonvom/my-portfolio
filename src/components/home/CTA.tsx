@@ -1,38 +1,54 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
+
+const actions = [
+  { label: "Download Resume", href: "/resume.pdf", external: true, primary: true },
+  { label: "GitHub", href: "https://github.com/wonvom", external: true, primary: false },
+  { label: "Send Email", href: "mailto:knowjo94@gmail.com", external: false, primary: false },
+];
 
 export function CTA() {
   return (
-    <section className="py-16 border-t border-white/10">
+    <section className="py-20 border-t border-black/[0.06] dark:border-white/[0.06]">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="space-y-4"
+        className="
+          relative rounded-2xl px-8 py-10 text-center space-y-6
+          bg-white/70 dark:bg-white/[0.04] backdrop-blur-xl
+          border border-black/[0.08] dark:border-white/[0.08]
+          overflow-hidden
+        "
       >
-        <h2 className="text-2xl font-semibold text-white">
-          Let&apos;s work together.
-        </h2>
-        <p className="max-w-md text-neutral-400 leading-relaxed">
-          I&apos;m currently open to full-time roles and freelance projects.
-          Feel free to reach out — I&apos;d love to chat.
-        </p>
-        <div className="flex gap-4 pt-2">
-          <a
-            href="mailto:knowjo94@gmail.com"
-            className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
-          >
-            Email Me
-          </a>
-          <Link
-            href="/projects"
-            className="rounded-md border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-          >
-            View Projects
-          </Link>
+        {/* Subtle glow */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-black/[0.06] dark:via-white/10 to-transparent" />
+        <div className="absolute inset-x-1/4 bottom-0 h-20 bg-blue-500/5 blur-3xl rounded-full pointer-events-none" />
+
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">Let&apos;s work together.</h2>
+          <p className="text-neutral-500 text-sm max-w-sm mx-auto leading-relaxed">
+            Open to full-time roles and selected freelance projects.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3 justify-center">
+          {actions.map(({ label, href, external, primary }) => (
+            <a
+              key={label}
+              href={href}
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className={
+                primary
+                  ? "px-5 py-2.5 rounded-xl text-sm font-medium bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
+                  : "px-5 py-2.5 rounded-xl text-sm font-medium bg-black/[0.05] dark:bg-white/[0.06] text-neutral-900 dark:text-white border border-black/[0.1] dark:border-white/[0.1] hover:bg-black/[0.09] dark:hover:bg-white/[0.1] transition-colors"
+              }
+            >
+              {label}
+            </a>
+          ))}
         </div>
       </motion.div>
     </section>

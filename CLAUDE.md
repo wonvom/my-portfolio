@@ -1,7 +1,7 @@
 # Project: Developer Portfolio
 
 Next.js App Router 기반 취업용 개발자 포트폴리오.
-추후 개발 블로그·코딩테스트 아카이브·사진 갤러리로 확장 예정.
+추후 개발 블로그, 코딩테스트 아카이브, 사진 갤러리로 확장 예정.
 
 ## Tech Stack
 
@@ -35,6 +35,8 @@ src/types — 타입 정의
 - 타입은 src/types/에 분리. any 금지.
 - 더미 데이터는 src/data/로 분리. 컴포넌트 내 하드코딩 금지.
 - named export 사용. default export는 page.tsx에만.
+- 중간점(·) 사용 금지. 나열 시 /, 및, 쉼표로 대체할 것.
+- 모든 한국어 텍스트는 음슴체로 작성할 것. (~했음, ~됐음, ~있음, ~없음, ~임)
 
 ## Design
 
@@ -50,7 +52,10 @@ src/types — 타입 정의
 3. 작업 후 npm run build로 검증.
 4. 에러 발생 시 스스로 디버깅. 3회 시도 후 실패하면 보고.
 5. 기존 파일 수정 시 기존 구조 유지.
+6. 작업 완료 후 반드시 git commit 및 git push를 수행할 것.
+7. 응답 마지막에 아래 형식으로 커밋 로그를 요약해서 표시할 것:
 
-## Do Not Touch
-
-blog, coding-test, gallery 영역은 폴더 구조만 고려. 아직 구현하지 말 것.
+```
+[Git] <commit hash> <commit message>
+pushed to <branch>
+```
