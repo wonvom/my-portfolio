@@ -20,7 +20,7 @@ export const strengths: Strength[] = [
     symbol: "◎",
     title: "데이터 기반 의사결정",
     description:
-      "수천 개 두께 로그를 전처리·분석·시각화해 현장 의사결정 속도를 높이고, ADS-B·FAA·항로 데이터를 통합해 운영 효율 분석 기반을 구축함.",
+      "수천 개 두께 로그를 전처리/분석/시각화해 현장 의사결정 속도를 높이고, ADS-B/FAA/항로 데이터를 통합해 운영 효율 분석 기반을 구축함.",
     linkedProjects: ["battery-automation", "aviation-bigquery"],
   },
   {
@@ -36,7 +36,7 @@ export const strengths: Strength[] = [
     symbol: "◆",
     title: "실행 및 검증",
     description:
-      "자동화 프로그램을 구현하고 작업 시간을 수일→30분으로 단축해 성과를 검증. epoch 변화에 따른 생성 결과를 비교하며 모델 성능을 조정.",
+      "자동화 프로그램을 구현하고 작업 시간을 수일 → 30분으로 단축해 성과를 검증. epoch 변화에 따른 생성 결과를 비교하며 모델 성능을 조정.",
     linkedProjects: ["battery-automation", "dcgan-generation"],
   },
   {
@@ -44,7 +44,7 @@ export const strengths: Strength[] = [
     symbol: "◉",
     title: "고객 중심 사고",
     description:
-      "웹·Android·iOS 3채널의 일관된 사용자 흐름을 설계하고, 캠퍼스 사용자의 위치 파악 불편을 AR 기반 길찾기 기능으로 해결함.",
+      "웹/Android/iOS 3채널의 일관된 사용자 흐름을 설계하고, 캠퍼스 사용자의 위치 파악 불편을 AR 기반 길찾기 기능으로 해결함.",
     linkedProjects: ["homeshopping-fullstack", "ar-campus-navigation"],
   },
 ];

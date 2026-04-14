@@ -15,10 +15,10 @@ export const experienceItems: ExperienceItem[] = [
     id: "data-science-lab",
     period: "2019.03 — 2020.07",
     role: "Research Assistant",
-    org: "Data Science Lab · Saltlux 산학협력",
+    org: "Data Science Lab / Saltlux 산학협력",
     type: "research",
     summary:
-      "연구 조교로 데이터 크롤링 및 시각화 업무 수행. Saltlux와의 빅데이터 협업 프로젝트에 참여해 산업 데이터를 수집·정리·가공·시각화하며 산학 협력 경험 확보.",
+      "연구 조교로 데이터 크롤링 및 시각화 업무 수행. Saltlux와의 빅데이터 협업 프로젝트에 참여해 산업 데이터를 수집/정리/가공/시각화하며 산학 협력 경험 확보.",
     keywords: ["크롤링", "데이터 시각화", "산학협력", "Python"],
   },
   {
@@ -28,7 +28,7 @@ export const experienceItems: ExperienceItem[] = [
     org: "Redbeans 학술 동아리",
     type: "club",
     summary:
-      "2019년 학술 동아리 회장으로 Java 언어 교육과 멘토링 프로그램을 기획·운영. 회원들의 수준과 관심사를 반영해 내부 스터디와 세미나를 구성하고 학습 참여를 독려함.",
+      "2019년 학술 동아리 회장으로 Java 언어 교육과 멘토링 프로그램을 기획/운영. 회원들의 수준과 관심사를 반영해 내부 스터디와 세미나를 구성하고 학습 참여를 독려함.",
     keywords: ["리더십", "교육 기획", "Java", "멘토링"],
   },
   {

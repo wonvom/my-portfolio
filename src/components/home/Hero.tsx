@@ -17,7 +17,7 @@ export function Hero() {
         >
           {/* Badge */}
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-neutral-500 dark:text-neutral-400 bg-black/[0.04] dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.08]">
-            Data Engineer · SW Developer
+            Data Engineer / SW Developer
           </span>
 
           {/* Headline */}

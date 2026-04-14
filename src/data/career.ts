@@ -19,9 +19,9 @@ export const careerItems: CareerItem[] = [
     id: "research",
     period: "2019 — 2020",
     role: "Research Assistant",
-    org: "Data Science Lab · Saltlux",
+    org: "Data Science Lab / Saltlux",
     description:
-      "산업 데이터 크롤링·시각화·가공 업무 수행. Saltlux 빅데이터 산학협력 프로젝트 참여.",
+      "산업 데이터 크롤링/시각화/가공 업무 수행. Saltlux 빅데이터 산학협력 프로젝트 참여.",
   },
   {
     id: "education",
@@ -29,6 +29,6 @@ export const careerItems: CareerItem[] = [
     role: "B.S. Computer Science",
     org: "Chung-Ang University",
     description:
-      "컴퓨터공학 전공. AR 앱·DCGAN·홈쇼핑 풀스택 등 다양한 프로젝트 수행.",
+      "컴퓨터공학 전공. AR 앱/DCGAN/홈쇼핑 풀스택 등 다양한 프로젝트 수행.",
   },
 ];
