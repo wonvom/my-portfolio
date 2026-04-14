@@ -4,38 +4,70 @@ export const projects: Project[] = [
   {
     id: "battery-automation",
     title: "배터리 전극 절연막 두께 데이터 자동화",
-    period: "2024.04 — 2026.03",
+    period: "2024.04 — 2025.03",
     role: "검사 장비 유지보수 및 데이터 분석/자동화",
     problem:
-      "수천 개 로그에서 필요한 두께 데이터를 수작업으로 추출·정리해야 해 분석 리드타임이 길고 반복 업무 부담이 컸음",
+      "배터리 전극 공정에서 절연막 두께 데이터가 담긴 CSV 파일이 쌓여갔고, 검사팀은 특정 랏·날짜·공정 전후 데이터를 비교하기 위해 수기로 엑셀 시트에 일일이 찾아 입력했다. 생산 초기에는 팀장들이 직접 처리했지만, 생산량이 증가하면서 수작업에 드는 시간이 기하급수적으로 늘어났다.",
     solution:
-      "Python 기반 자동화 프로그램을 구현하고, 이진 탐색을 적용해 필요한 로그를 빠르게 찾은 뒤 전처리, 분석, 시각화까지 하나의 흐름으로 연결함",
-    result: "수일 걸리던 작업을 30분 내로 단축 — 현장 의사결정 속도와 데이터 활용성 향상",
+      "Python 기반 자동화 프로그램을 직접 제안하고 개발했다. 처음에는 두께 추이를 단순 시각화하는 수준에서 출발해, 점진적으로 제품 ID·시간 범위·이상치 구간 등 원하는 조건을 한 번에 조회·비교할 수 있도록 기능을 확장했다. 이진 탐색(bisect)을 적용해 대용량 로그에서 목표 시간대의 데이터를 빠르게 탐색하고, 이상치 제거(2σ 필터링)까지 포함한 전처리·분석·시각화 파이프라인을 구축했다.",
+    result: "수일 걸리던 데이터 추출·정리 작업을 획기적으로 단축 — 절감된 시간을 미검·과검 등 품질·수율 분석에 집중해 현장 효율성 극대화",
     outcome:
-      "수일 걸리던 분석 작업을 30분 내로 단축해 현장 의사결정 속도와 데이터 활용성을 높임",
+      "수작업으로 수일이 걸리던 분석 리드타임을 획기적으로 단축했다. 데이터 정리에 쓰던 시간을 미검·과검 분석 등 품질·수율 향상에 집중할 수 있게 되어 현장 효율성이 극대화되었다.",
     learned:
-      "비정형 로그 데이터의 구조를 이해하고 파이프라인으로 연결하는 설계 역량, 이진 탐색 알고리즘의 실전 적용 경험",
-    tags: ["Python", "데이터 자동화", "이진 탐색", "시각화", "matplotlib"],
+      "현장 문제를 직접 발견하고 자동화를 제안·개발하는 주도적 문제 해결 경험. 이진 탐색 알고리즘의 실전 적용과 비정형 산업 데이터를 파이프라인으로 연결하는 설계 역량.",
+    tags: ["Python", "데이터 자동화", "이진 탐색", "시각화", "matplotlib", "pandas"],
     relatedRoles: ["데이터 엔지니어", "SW 개발자"],
     featured: true,
-    imageAlt: "배터리 두께 데이터 자동화 파이프라인 다이어그램",
+    imageUrl: "/battery-electrode.svg",
+    imageAlt: "배터리 전극 절연막 단면 구조도",
     imageGallery: [],
     codeSnippet: {
       language: "python",
-      filename: "extract_thickness.py",
-      code: `def find_thickness_data(logs: list[dict], target_date: str) -> list[float]:
-    lo, hi = 0, len(logs) - 1
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if logs[mid]["date"] < target_date:
-            lo = mid + 1
-        elif logs[mid]["date"] > target_date:
-            hi = mid - 1
-        else:
-            return [r["thickness"] for r in logs[mid]["records"]]
-    return []`,
+      filename: "find_average_thickness.py",
+      code: `from bisect import bisect_left, bisect_right
+from datetime import datetime
+
+def time_to_seconds(time_str):
+    time_obj = datetime.strptime(time_str, '%H:%M:%S')
+    return time_obj.hour * 3600 + time_obj.minute * 60 + time_obj.second
+
+
+def find_average_thickness(file_path, time_str):
+    inline_index = load_inline_index(file_path)
+    if inline_index is None:
+        return None
+
+    seconds_list, raw_thickness_list = inline_index
+    target_seconds = time_to_seconds(time_str)
+
+    start = bisect_left(seconds_list, target_seconds - 4)
+    end = bisect_right(seconds_list, target_seconds + 5)
+
+    thickness_list = [value for value in raw_thickness_list[start:end] if value != 0]
+    if not thickness_list:
+        return None
+
+    mean = sum(thickness_list) / len(thickness_list)
+    std_dev = (sum((x - mean) ** 2 for x in thickness_list) / len(thickness_list)) ** 0.5
+    filtered_list = [x for x in thickness_list if abs(x - mean) <= 2 * std_dev]
+
+    if not filtered_list:
+        return None
+
+    return round(sum(filtered_list) / len(filtered_list), 3)`,
     },
     codeSnippets: [],
+    diagram: `flowchart LR
+    A["공정 로그 데이터"] --> B["조건에 맞는 로그 위치 탐색"]
+    B --> C["가운데 지점 확인"]
+    C --> D{"목표 조건이 앞/뒤 어디에 있는가?"}
+    D -->|앞쪽| E["뒤 절반 제외"]
+    D -->|뒤쪽| F["앞 절반 제외"]
+    E --> G["남은 구간에서 다시 가운데 확인"]
+    F --> G
+    G --> H["조건과 일치하는 로그 위치 찾기"]
+    H --> I["해당 구간의 두께 데이터 추출"]
+    I --> J["분석 및 시각화 자동화"]`,
   },
   {
     id: "aviation-bigquery",

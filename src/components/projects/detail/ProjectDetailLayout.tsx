@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { CodePreview } from "@/components/ui/CodePreview";
 import { TechBadge } from "@/components/ui/TechBadge";
+import { MermaidDiagram } from "@/components/ui/MermaidDiagram";
 import type { Project } from "@/types/project";
 
 type ProjectDetailLayoutProps = {
@@ -118,10 +119,20 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
                 </div>
               ))}
             </div>
+          ) : project.imageUrl ? (
+            <div className="relative w-full rounded-xl overflow-hidden border border-black/[0.07] dark:border-white/[0.07]">
+              <Image src={project.imageUrl} alt={project.imageAlt ?? project.title} width={800} height={480} className="w-full h-auto" />
+            </div>
           ) : (
             <ImageGalleryPlaceholder alt={project.imageAlt ?? project.title} />
           )}
         </Section>
+
+        {project.diagram && (
+          <Section title="Diagram" label="아키텍처 다이어그램">
+            <MermaidDiagram chart={project.diagram} />
+          </Section>
+        )}
 
         <Section title="Code" label="코드 스니펫">
           {project.codeSnippets && project.codeSnippets.length > 0 ? (

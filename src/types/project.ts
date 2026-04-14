@@ -24,4 +24,5 @@ export type Project = {
   imageGallery?: string[];
   codeSnippet?: CodeSnippet;
   codeSnippets?: CodeSnippet[];
+  diagram?: string;
 };

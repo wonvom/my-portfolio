@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { LanguageSelect } from "@/components/landing/LanguageSelect";
@@ -20,13 +20,24 @@ const subtitle: Record<Language, string> = {
   en: "Select a destination",
 };
 
+const LANG_KEY = "portfolio_lang";
+
 export default function LandingPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("language");
   const [lang, setLang] = useState<Language>("en");
   const [expanding, setExpanding] = useState<Expanding | null>(null);
 
+  useEffect(() => {
+    const saved = sessionStorage.getItem(LANG_KEY) as Language | null;
+    if (saved === "ko" || saved === "en") {
+      setLang(saved);
+      setStep("cards");
+    }
+  }, []);
+
   function handleLanguageSelect(selected: Language) {
+    sessionStorage.setItem(LANG_KEY, selected);
     setLang(selected);
     setStep("cards");
   }
