@@ -28,14 +28,11 @@ export function ProjectsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-            style={{ background: "var(--bg)" }}
           >
             <Link
               href={`/projects/${project.id}`}
-              className="group flex flex-col h-full p-6 transition-colors duration-200"
+              className="group flex flex-col h-full p-6 transition-colors duration-200 hover:bg-[var(--card-bg)]"
               style={{ background: "var(--bg)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--card-bg)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg)")}
             >
               <div className="flex justify-between items-start mb-4">
                 <span className="text-[10px] font-bold tracking-[1px]" style={{ color: "var(--muted)" }}>
@@ -44,6 +41,7 @@ export function ProjectsSection() {
                 <span
                   className="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   style={{ color: "var(--fg)" }}
+                  aria-hidden="true"
                 >
                   ↗
                 </span>
@@ -70,9 +68,11 @@ export function ProjectsSection() {
                   </span>
                 ))}
               </div>
-              <p className="text-[9px] mt-3" style={{ color: "var(--muted)" }}>
-                {project.period}
-              </p>
+              {project.period && (
+                <p className="text-[9px] mt-3" style={{ color: "var(--muted)" }}>
+                  {project.period}
+                </p>
+              )}
             </Link>
           </motion.div>
         ))}
