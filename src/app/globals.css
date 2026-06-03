@@ -22,7 +22,7 @@
 }
 
 body {
-  font-family: var(--font-inter), -apple-system, sans-serif;
+  font-family: var(--font-sans), -apple-system, sans-serif;
 }
 
 /* scroll-snap 컨테이너 */

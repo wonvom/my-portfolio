@@ -227,14 +227,14 @@ export function WorldMapView({ countries, onSelectCountry, interactive }: Props)
               <text x={lx} y={ly - 2.5}
                 textAnchor="middle" dominantBaseline="middle"
                 fontSize={8} fontWeight={600} fill={col.nameText}
-                fontFamily="var(--font-geist-sans)" letterSpacing="0.2">
+                fontFamily="var(--font-inter)" letterSpacing="0.2">
                 {name}
               </text>
               {/* Photo count */}
               <text x={lx} y={ly + 6.5}
                 textAnchor="middle" dominantBaseline="middle"
                 fontSize={5.5} fill={col.subText}
-                fontFamily="var(--font-geist-sans)">
+                fontFamily="var(--font-inter)">
                 {country.totalPhotos} photo{country.totalPhotos !== 1 ? "s" : ""}
               </text>
             </motion.g>
