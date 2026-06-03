@@ -20,10 +20,8 @@ export function FeaturedSection() {
         </span>
         <Link
           href="#projects"
-          className="text-[9px] tracking-[1px] transition-colors duration-200"
+          className="text-[9px] tracking-[1px] transition-colors duration-200 hover:text-[var(--fg)]"
           style={{ color: "var(--sub)" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--sub)")}
         >
           View All Projects →
         </Link>
@@ -37,6 +35,7 @@ export function FeaturedSection() {
             className="group relative"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
+            whileHover="hovered"
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
           >
@@ -45,7 +44,7 @@ export function FeaturedSection() {
               className="absolute left-0 top-0 bottom-0 w-[2px]"
               style={{ background: "var(--fg)", originY: 0 }}
               initial={{ scaleY: 0 }}
-              whileHover={{ scaleY: 1 }}
+              variants={{ hovered: { scaleY: 1 } }}
               transition={{ duration: 0.25 }}
             />
 
@@ -64,7 +63,7 @@ export function FeaturedSection() {
                     className="text-[10px] font-bold tracking-[1px] shrink-0"
                     style={{ color: "var(--muted)" }}
                   >
-                    0{i + 1}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3
                     className="text-[15px] font-extrabold tracking-[-0.5px] leading-[1.15] transition-colors duration-200 group-hover:text-[var(--fg)]"
@@ -98,13 +97,14 @@ export function FeaturedSection() {
               {/* Right col */}
               <div className="flex flex-col items-end justify-between">
                 <span
-                  className="text-[9px] text-right leading-relaxed"
+                  className="text-[9px] text-right leading-relaxed whitespace-pre-wrap"
                   style={{ color: "var(--muted)" }}
                 >
                   {project.period?.replace(" — ", "\n")}
                 </span>
                 <motion.span
                   className="text-lg"
+                  aria-hidden="true"
                   style={{ color: "var(--fg)" }}
                   initial={{ opacity: 0, x: -8 }}
                   whileHover={{ opacity: 1, x: 0 }}
