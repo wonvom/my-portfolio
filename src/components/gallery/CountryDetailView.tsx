@@ -47,7 +47,6 @@ export function CountryDetailView({ country, onBack, onSelectCity }: Props) {
         setSvg({ d: geoPath(proj)(feat) ?? "", vw, vh });
       })
       .catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country.isoNumeric]);
 
   const dark = theme === "dark";

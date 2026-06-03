@@ -54,7 +54,7 @@ export function ProjectsSection() {
               </h3>
               {project.preview && (
                 <p className="text-[10px] italic mb-4" style={{ color: "var(--sub)" }}>
-                  "{project.preview}"
+                  &ldquo;{project.preview}&rdquo;
                 </p>
               )}
               <div className="flex flex-wrap gap-1 mt-auto">

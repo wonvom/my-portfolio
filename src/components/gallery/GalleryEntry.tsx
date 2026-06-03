@@ -51,6 +51,7 @@ export function GalleryEntry({ countries }: Props) {
     setView("world");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function handleSelectCity(_city: GalleryCity) {
     // TODO: open city photo grid
   }

@@ -74,7 +74,7 @@ export function FeaturedSection() {
                 </div>
                 {project.preview && (
                   <p className="text-[10px] italic mb-3" style={{ color: "var(--sub)" }}>
-                    "{project.preview}"
+                    &ldquo;{project.preview}&rdquo;
                   </p>
                 )}
                 <div className="flex flex-wrap gap-1">
