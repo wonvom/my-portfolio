@@ -26,10 +26,11 @@ export function AnimatedButton({ children, onClick, href, variant = "fill", clas
       {variant === "fill" && (
         <motion.span
           className="absolute inset-0 bg-[var(--fg)] z-0"
+          style={{ originX: 0 }}
           variants={{
-            hover: { scaleX: 1, originX: 0 },
+            hover: { scaleX: 1 },
           }}
-          initial={{ scaleX: 0, originX: 0 }}
+          initial={{ scaleX: 0 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         />
       )}

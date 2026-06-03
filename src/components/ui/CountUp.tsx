@@ -30,10 +30,5 @@ export function CountUp({ target, suffix = "", duration = 1200 }: Props) {
     return () => clearInterval(timer);
   }, [isInView, target, duration]);
 
-  return (
-    <span ref={ref}>
-      {count}
-      {suffix}
-    </span>
-  );
+  return <span ref={ref}>{count}{suffix}</span>;
 }
