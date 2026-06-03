@@ -16,7 +16,7 @@ export function HeroSection() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        Software Engineer · Seoul
+        Software Engineer / Seoul
       </motion.p>
 
       {/* Name */}
@@ -65,6 +65,7 @@ export function HeroSection() {
           style={{ color: "var(--muted)" }}
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden="true"
         >
           ↓ SCROLL
         </motion.span>
