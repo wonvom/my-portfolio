@@ -1,33 +1,8 @@
-// src/components/sections/StorySection.tsx
 "use client";
 
 import { motion } from "motion/react";
 import { CountUp } from "@/components/ui/CountUp";
-
-const STORY_BLOCKS = [
-  {
-    side: "left" as const,
-    meta: "Education · 2019 — 2024",
-    title: "컴퓨터공학을\n전공으로 선택한 이유",
-    body: "중앙대학교 컴퓨터공학부를 졸업하고, 현재 미국 컴퓨터공학 석사 과정을 진행 중. 데이터를 다루는 일이 단순한 분석이 아니라 작동하는 시스템을 만드는 것임을 배움.",
-    chips: ["중앙대학교 컴공", "B.S. CS", "M.S. 진행 중"],
-    imagePlaceholder: "학교 사진",
-  },
-  {
-    side: "right" as const,
-    meta: "Experience · 2024 — 2025",
-    title: "현장에서 직접\n발견한 문제",
-    body: "배터리 전극 공정 현장에서 수작업으로 수일이 걸리던 데이터 분석을 30분으로 단축. 문제를 직접 발견하고 자동화 시스템으로 구조적으로 해결한 경험.",
-    chips: ["Python", "데이터 자동화", "이진 탐색"],
-    imagePlaceholder: "현장/작업 사진",
-  },
-];
-
-const STATS = [
-  { label: "Projects", target: 7, suffix: "" },
-  { label: "Experience", target: 2, suffix: "yr" },
-  { label: "Tech Stack", target: 20, suffix: "+" },
-];
+import { storyBlocks, stats } from "@/data/story";
 
 export function StorySection() {
   return (
@@ -57,9 +32,9 @@ export function StorySection() {
       </motion.h2>
 
       {/* Story blocks */}
-      {STORY_BLOCKS.map((block, i) => (
+      {storyBlocks.map((block) => (
         <motion.div
-          key={i}
+          key={block.meta}
           className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12`}
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -71,7 +46,7 @@ export function StorySection() {
             className={`${block.side === "right" ? "md:order-2" : ""} aspect-[4/3] rounded-[2px] flex flex-col items-center justify-center gap-2 border`}
             style={{ background: "var(--card-bg)", borderColor: "var(--border)" }}
           >
-            <span style={{ fontSize: 32, opacity: 0.15 }}>📷</span>
+            <span aria-hidden="true" style={{ fontSize: 32, opacity: 0.15 }}>📷</span>
             <span className="text-[9px] tracking-[2px] uppercase text-center px-4" style={{ color: "var(--muted)" }}>
               {block.imagePlaceholder}
             </span>
@@ -115,7 +90,7 @@ export function StorySection() {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <div key={stat.label}>
             <div
               className="font-black tracking-[-3px] leading-none"
