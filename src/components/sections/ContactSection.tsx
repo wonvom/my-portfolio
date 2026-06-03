@@ -1,14 +1,7 @@
-// src/components/sections/ContactSection.tsx
 "use client";
 
 import { motion } from "motion/react";
-import { profile } from "@/data/profile";
-
-const LINKS = [
-  { label: "Email", value: profile.email, href: `mailto:${profile.email}`, arrow: "↗" },
-  { label: "GitHub", value: "github.com/wonvom", href: profile.githubHref, arrow: "↗" },
-  { label: "Resume", value: "Download PDF", href: profile.resumeHref, arrow: "↓" },
-];
+import { contactLinks } from "@/data/contact";
 
 export function ContactSection() {
   return (
@@ -39,12 +32,12 @@ export function ContactSection() {
 
       {/* Links */}
       <div className="flex flex-col flex-1 justify-center">
-        {LINKS.map((link, i) => (
+        {contactLinks.map((link, i) => (
           <motion.a
             key={link.label}
             href={link.href}
-            target={link.label !== "Resume" ? "_blank" : undefined}
-            rel="noopener noreferrer"
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
             className="group flex justify-between items-center py-4 border-b transition-opacity duration-200 hover:opacity-60"
             style={{ borderColor: "var(--border)" }}
             initial={{ opacity: 0, x: -16 }}
@@ -68,7 +61,7 @@ export function ContactSection() {
       {/* Footer */}
       <div className="pt-10 mt-auto">
         <p className="text-[9px] tracking-[2px]" style={{ color: "var(--muted)" }}>
-          © 2025 Wonjong Kim. All rights reserved.
+          © {new Date().getFullYear()} Wonjong Kim. All rights reserved.
         </p>
       </div>
     </section>
