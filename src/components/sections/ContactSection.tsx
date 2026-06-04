@@ -13,7 +13,7 @@ export function ContactSection() {
         <span className="text-xs tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
           Contact
         </span>
-        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>06 / 06</span>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>04 / 04</span>
       </div>
 
       {/* Statement */}

@@ -58,7 +58,7 @@ export function HeroSection() {
       {/* Bottom: section number + scroll hint */}
       <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end pointer-events-none">
         <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>
-          01 / 06
+          01 / 04
         </span>
         <motion.span
           className="text-xs tracking-[2px]"

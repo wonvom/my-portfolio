@@ -4,13 +4,11 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { SectionDots } from "@/components/ui/SectionDots";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { FeaturedSection } from "@/components/sections/FeaturedSection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
-import { StorySection } from "@/components/sections/StorySection";
 import { SkillsSection } from "@/components/sections/SkillsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 
-const SECTION_IDS = ["hero", "featured", "projects", "story", "skills", "contact"];
+const SECTION_IDS = ["hero", "projects", "skills", "contact"];
 
 export default function PortfolioPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,9 +49,7 @@ export default function PortfolioPage() {
       />
       <main ref={containerRef} className="snap-container pt-12">
         <HeroSection />
-        <FeaturedSection />
         <ProjectsSection />
-        <StorySection />
         <SkillsSection />
         <ContactSection />
       </main>

@@ -14,7 +14,7 @@ export function SkillsSection() {
         <span className="text-xs tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
           Skills
         </span>
-        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>05 / 06</span>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>03 / 04</span>
       </div>
 
       <div className="flex flex-col gap-6 flex-1 justify-center">

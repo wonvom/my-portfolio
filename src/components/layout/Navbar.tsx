@@ -5,9 +5,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { MobileMenu } from "./MobileMenu";
 
 const NAV_SECTIONS = [
-  { label: "Featured", id: "featured" },
   { label: "Projects", id: "projects" },
-  { label: "Story", id: "story" },
   { label: "Skills", id: "skills" },
 ];
 
