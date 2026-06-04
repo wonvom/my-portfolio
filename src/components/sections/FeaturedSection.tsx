@@ -60,20 +60,20 @@ export function FeaturedSection() {
               <div>
                 <div className="flex items-baseline gap-3 mb-2">
                   <span
-                    className="text-xs font-bold tracking-[1px] shrink-0"
-                    style={{ color: "var(--muted)" }}
+                    className="text-sm font-bold tracking-[1px] shrink-0"
+                    style={{ color: "var(--fg)", opacity: 0.35 }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3
-                    className="text-base font-extrabold tracking-[-0.5px] leading-[1.15] transition-colors duration-200 group-hover:text-[var(--fg)]"
+                    className="text-lg font-extrabold tracking-[-0.5px] leading-[1.15] transition-colors duration-200"
                     style={{ color: "var(--fg)" }}
                   >
                     {project.title}
                   </h3>
                 </div>
                 {project.preview && (
-                  <p className="text-xs italic mb-3" style={{ color: "var(--sub)" }}>
+                  <p className="text-sm italic mb-3" style={{ color: "var(--sub)" }}>
                     &ldquo;{project.preview}&rdquo;
                   </p>
                 )}
@@ -81,7 +81,7 @@ export function FeaturedSection() {
                   {project.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[11px] px-[6px] py-[2px] rounded-[2px] border"
+                      className="text-xs px-[6px] py-[2px] rounded-[2px] border"
                       style={{
                         color: "var(--sub)",
                         borderColor: "var(--border)",
@@ -97,8 +97,8 @@ export function FeaturedSection() {
               {/* Right col */}
               <div className="flex flex-col items-end justify-between">
                 <span
-                  className="text-xs text-right leading-relaxed whitespace-pre-wrap"
-                  style={{ color: "var(--muted)" }}
+                  className="text-sm text-right leading-relaxed whitespace-pre-wrap font-medium"
+                  style={{ color: "var(--sub)" }}
                 >
                   {project.period?.replace(" — ", "\n")}
                 </span>
