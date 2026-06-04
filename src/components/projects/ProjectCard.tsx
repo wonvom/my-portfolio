@@ -12,7 +12,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div>
           <h3 className="font-semibold text-neutral-900 dark:text-white text-sm">{project.title}</h3>
           {project.period && (
-            <p className="text-[10px] text-neutral-400 dark:text-neutral-600 font-mono mt-0.5">{project.period}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono mt-0.5">{project.period}</p>
           )}
         </div>
         {project.featured && (
@@ -22,14 +22,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
         )}
       </div>
 
-      <p className="flex-1 text-xs text-neutral-500 leading-relaxed">{project.problem}</p>
-      <p className="text-xs text-emerald-600 dark:text-emerald-400/80 font-medium">{project.result}</p>
+      <p className="flex-1 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{project.problem}</p>
+      <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{project.result}</p>
 
       <div className="flex flex-wrap gap-1.5">
         {project.tags.slice(0, 4).map((tag) => (
           <span
             key={tag}
-            className="rounded-full bg-black/[0.05] dark:bg-white/10 px-2 py-0.5 text-[10px] text-neutral-600 dark:text-neutral-300"
+            className="rounded-full bg-black/[0.05] dark:bg-white/10 px-2 py-0.5 text-xs text-neutral-600 dark:text-neutral-300"
           >
             {tag}
           </span>
@@ -39,19 +39,19 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="flex gap-3 pt-1">
         <Link
           href={`/projects/${project.id}`}
-          className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors"
+          className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
         >
           Detail →
         </Link>
         {project.href && (
           <a href={project.href} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
             Live →
           </a>
         )}
         {project.githubHref && (
           <a href={project.githubHref} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
             GitHub →
           </a>
         )}

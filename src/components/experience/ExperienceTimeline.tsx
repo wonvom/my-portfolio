@@ -30,7 +30,7 @@ export function ExperienceTimeline() {
         className="space-y-8"
       >
         <div className="space-y-1">
-          <p className="text-[10px] text-neutral-400 dark:text-neutral-600 tracking-widest uppercase">Background</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 tracking-widest uppercase">Background</p>
           <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">Experience</h1>
         </div>
 
@@ -59,24 +59,24 @@ export function ExperienceTimeline() {
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium text-neutral-900 dark:text-white">{item.role}</span>
-                        <span className="text-[10px] text-neutral-500 px-2 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.07] dark:border-white/[0.07]">
+                        <span className="text-xs text-neutral-500 dark:text-neutral-400 px-2 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.07] dark:border-white/[0.07]">
                           {typeLabel[item.type]}
                         </span>
                       </div>
-                      <span className="text-xs text-neutral-600 dark:text-neutral-400">{item.org}</span>
+                      <span className="text-sm text-neutral-600 dark:text-neutral-300">{item.org}</span>
                     </div>
-                    <span className="text-[10px] text-neutral-400 dark:text-neutral-600 font-mono shrink-0">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400 font-mono shrink-0">
                       {item.period}
                     </span>
                   </div>
 
-                  <p className="text-xs text-neutral-500 leading-relaxed">{item.summary}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{item.summary}</p>
 
                   <div className="flex flex-wrap gap-1.5">
                     {item.keywords.map((kw) => (
                       <span
                         key={kw}
-                        className="px-2 py-0.5 rounded-full text-[10px] text-neutral-500 dark:text-neutral-400 bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.07]"
+                        className="px-2 py-0.5 rounded-full text-xs text-neutral-600 dark:text-neutral-300 bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.07]"
                       >
                         {kw}
                       </span>

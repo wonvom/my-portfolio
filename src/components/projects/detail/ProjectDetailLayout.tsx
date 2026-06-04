@@ -32,13 +32,13 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
       >
         <div className="space-y-1">
           {project.period && (
-            <p className="text-[10px] text-neutral-400 dark:text-neutral-600 font-mono tracking-wider">{project.period}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono tracking-wider">{project.period}</p>
           )}
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white leading-tight">
             {project.title}
           </h1>
           {project.role && (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">{project.role}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300">{project.role}</p>
           )}
         </div>
 
@@ -55,7 +55,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
             {project.relatedRoles.map((r) => (
               <span
                 key={r}
-                className="px-2.5 py-0.5 rounded-full text-[10px] text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20"
+                className="px-2.5 py-0.5 rounded-full text-xs text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20"
               >
                 {r}
               </span>
@@ -72,12 +72,12 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
         className="space-y-10"
       >
         <Section title="Problem" label="문제">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{project.problem}</p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{project.problem}</p>
         </Section>
 
         {project.solution && (
           <Section title="Solution" label="해결 방법">
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{project.solution}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{project.solution}</p>
           </Section>
         )}
 
@@ -113,7 +113,7 @@ export function ProjectDetailLayout({ project }: ProjectDetailLayoutProps) {
 
         {project.learned && (
           <Section title="What I Learned" label="배운 점">
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{project.learned}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">{project.learned}</p>
           </Section>
         )}
 
@@ -142,7 +142,7 @@ function Section({ title, label, children }: { title: string; label: string; chi
   return (
     <div className="space-y-3">
       <div className="space-y-0.5">
-        <p className="text-[10px] text-neutral-400 dark:text-neutral-600 tracking-widest uppercase">{title}</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 tracking-widest uppercase">{title}</p>
         <h2 className="text-base font-semibold text-neutral-900 dark:text-white">{label}</h2>
       </div>
       {children}
