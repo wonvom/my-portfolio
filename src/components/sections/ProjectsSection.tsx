@@ -69,7 +69,7 @@ export function ProjectsSection() {
                 ))}
               </div>
               {project.period && (
-                <p className="text-xs mt-3" style={{ color: "var(--muted)" }}>
+                <p className="text-xs mt-3" style={{ color: "var(--sub)" }}>
                   {project.period}
                 </p>
               )}
