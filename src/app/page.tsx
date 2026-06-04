@@ -24,16 +24,19 @@ const LANG_KEY = "portfolio_lang";
 
 export default function LandingPage() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<Step>("language");
   const [lang, setLang] = useState<Language>("en");
   const [expanding, setExpanding] = useState<Expanding | null>(null);
 
   useEffect(() => {
+    setExpanding(null);
     const saved = sessionStorage.getItem(LANG_KEY) as Language | null;
     if (saved === "ko" || saved === "en") {
       setLang(saved);
       setStep("cards");
     }
+    setMounted(true);
   }, []);
 
   function handleLanguageSelect(selected: Language) {
@@ -50,6 +53,10 @@ export default function LandingPage() {
     if (expanding) {
       router.push(expanding.href);
     }
+  }
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#07070f] transition-colors duration-300" />;
   }
 
   return (
