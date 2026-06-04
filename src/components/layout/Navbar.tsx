@@ -32,7 +32,7 @@ export function Navbar({ onNavigate }: Props) {
         {/* Logo */}
         <button
           onClick={() => onNavigate("hero")}
-          className="text-[11px] font-black tracking-[-0.5px]"
+          className="text-sm font-black tracking-[-0.5px]"
           style={{ color: "var(--fg)" }}
         >
           KIM WONJONG
@@ -44,7 +44,7 @@ export function Navbar({ onNavigate }: Props) {
             <button
               key={s.id}
               onClick={() => onNavigate(s.id)}
-              className="text-[10px] tracking-[1px] uppercase transition-colors duration-200"
+              className="text-xs tracking-[1px] uppercase transition-colors duration-200"
               style={{ color: "var(--sub)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--sub)")}
@@ -59,7 +59,7 @@ export function Navbar({ onNavigate }: Props) {
           <a
             href="/resume.pdf"
             download
-            className="text-[10px] tracking-[1px] uppercase transition-colors duration-200"
+            className="text-xs tracking-[1px] uppercase transition-colors duration-200"
             style={{ color: "var(--sub)" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--sub)")}
@@ -68,7 +68,7 @@ export function Navbar({ onNavigate }: Props) {
           </a>
           <button
             onClick={() => onNavigate("contact")}
-            className="text-[10px] tracking-[1px] uppercase transition-colors duration-200"
+            className="text-xs tracking-[1px] uppercase transition-colors duration-200"
             style={{ color: "var(--sub)" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--sub)")}
@@ -77,7 +77,7 @@ export function Navbar({ onNavigate }: Props) {
           </button>
           <button
             onClick={toggle}
-            className="text-[10px] tracking-[1px] uppercase transition-colors duration-200"
+            className="text-xs tracking-[1px] uppercase transition-colors duration-200"
             style={{ color: "var(--muted)" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--sub)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
@@ -89,7 +89,7 @@ export function Navbar({ onNavigate }: Props) {
 
         {/* Mobile: hamburger */}
         <button
-          className="md:hidden text-[10px] tracking-[2px] uppercase"
+          className="md:hidden text-xs tracking-[2px] uppercase"
           style={{ color: "var(--sub)" }}
           onClick={() => setMenuOpen(true)}
         >

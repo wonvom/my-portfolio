@@ -12,10 +12,10 @@ export function StorySection() {
     >
       {/* Header */}
       <div className="flex justify-between items-baseline mb-10">
-        <span className="text-[9px] tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
+        <span className="text-xs tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
           Story
         </span>
-        <span className="text-[9px] tracking-[2px]" style={{ color: "var(--muted)" }}>04 / 06</span>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>04 / 06</span>
       </div>
 
       {/* Tagline */}
@@ -47,30 +47,30 @@ export function StorySection() {
             style={{ background: "var(--card-bg)", borderColor: "var(--border)" }}
           >
             <span aria-hidden="true" style={{ fontSize: 32, opacity: 0.15 }}>📷</span>
-            <span className="text-[9px] tracking-[2px] uppercase text-center px-4" style={{ color: "var(--muted)" }}>
+            <span className="text-xs tracking-[2px] uppercase text-center px-4" style={{ color: "var(--muted)" }}>
               {block.imagePlaceholder}
             </span>
           </div>
 
           {/* Text */}
           <div className={block.side === "right" ? "md:order-1" : ""}>
-            <p className="text-[8px] tracking-[3px] uppercase mb-3" style={{ color: "var(--muted)" }}>
+            <p className="text-xs tracking-[3px] uppercase mb-3" style={{ color: "var(--muted)" }}>
               {block.meta}
             </p>
             <h3
-              className="text-[16px] font-extrabold tracking-[-0.5px] leading-[1.2] mb-3 whitespace-pre-line"
+              className="text-base font-extrabold tracking-[-0.5px] leading-[1.2] mb-3 whitespace-pre-line"
               style={{ color: "var(--fg)" }}
             >
               {block.title}
             </h3>
-            <p className="text-[11px] leading-[1.8] mb-4" style={{ color: "var(--sub)" }}>
+            <p className="text-sm leading-[1.8] mb-4" style={{ color: "var(--sub)" }}>
               {block.body}
             </p>
             <div className="flex flex-wrap gap-1">
               {block.chips.map((chip) => (
                 <span
                   key={chip}
-                  className="text-[9px] px-2 py-1 border rounded-[2px]"
+                  className="text-xs px-2 py-1 border rounded-[2px]"
                   style={{ color: "var(--sub)", borderColor: "var(--border)" }}
                 >
                   {chip}
@@ -98,7 +98,7 @@ export function StorySection() {
             >
               <CountUp target={stat.target} suffix={stat.suffix} />
             </div>
-            <div className="text-[9px] tracking-[2px] uppercase mt-2" style={{ color: "var(--muted)" }}>
+            <div className="text-xs tracking-[2px] uppercase mt-2" style={{ color: "var(--muted)" }}>
               {stat.label}
             </div>
           </div>

@@ -10,7 +10,7 @@ export function HeroSection() {
     >
       {/* Eyebrow */}
       <motion.p
-        className="text-[9px] tracking-[4px] uppercase mb-4"
+        className="text-xs tracking-[4px] uppercase mb-4"
         style={{ color: "var(--muted)" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -46,7 +46,7 @@ export function HeroSection() {
 
       {/* Tagline */}
       <motion.p
-        className="text-[11px] tracking-[2px] uppercase"
+        className="text-sm tracking-[2px] uppercase"
         style={{ color: "var(--sub)" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -57,11 +57,11 @@ export function HeroSection() {
 
       {/* Bottom: section number + scroll hint */}
       <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end pointer-events-none">
-        <span className="text-[10px] tracking-[2px]" style={{ color: "var(--muted)" }}>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>
           01 / 06
         </span>
         <motion.span
-          className="text-[10px] tracking-[2px]"
+          className="text-xs tracking-[2px]"
           style={{ color: "var(--muted)" }}
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}

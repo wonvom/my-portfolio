@@ -10,10 +10,10 @@ export function ContactSection() {
       className="snap-section flex flex-col justify-between px-8 md:px-14 py-16"
     >
       <div className="flex justify-between items-baseline mb-16">
-        <span className="text-[9px] tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
+        <span className="text-xs tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
           Contact
         </span>
-        <span className="text-[9px] tracking-[2px]" style={{ color: "var(--muted)" }}>06 / 06</span>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>06 / 06</span>
       </div>
 
       {/* Statement */}
@@ -45,10 +45,10 @@ export function ContactSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
           >
-            <span className="text-[9px] tracking-[2px] uppercase" style={{ color: "var(--muted)" }}>
+            <span className="text-xs tracking-[2px] uppercase" style={{ color: "var(--muted)" }}>
               {link.label}
             </span>
-            <span className="text-[11px] font-semibold" style={{ color: "var(--sub)" }}>
+            <span className="text-sm font-semibold" style={{ color: "var(--sub)" }}>
               {link.value}
             </span>
             <span className="text-sm" aria-hidden="true" style={{ color: "var(--muted)" }}>
@@ -60,7 +60,7 @@ export function ContactSection() {
 
       {/* Footer */}
       <div className="pt-10 mt-auto">
-        <p className="text-[9px] tracking-[2px]" style={{ color: "var(--muted)" }}>
+        <p className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>
           © {new Date().getFullYear()} Wonjong Kim. All rights reserved.
         </p>
       </div>
