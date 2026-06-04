@@ -15,10 +15,10 @@
 .dark {
   --bg: #080808;
   --fg: #ffffff;
-  --sub: #555555;
-  --muted: #333333;
-  --border: #141414;
-  --card-bg: #0e0e0e;
+  --sub: #999999;
+  --muted: #666666;
+  --border: #222222;
+  --card-bg: #111111;
 }
 
 body {

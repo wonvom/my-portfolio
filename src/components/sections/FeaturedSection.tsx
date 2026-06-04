@@ -15,12 +15,12 @@ export function FeaturedSection() {
     >
       {/* Header */}
       <div className="flex justify-between items-baseline mb-8">
-        <span className="text-[9px] tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
+        <span className="text-xs tracking-[4px] uppercase" style={{ color: "var(--muted)" }}>
           Selected Work
         </span>
         <Link
           href="#projects"
-          className="text-[9px] tracking-[1px] transition-colors duration-200 hover:text-[var(--fg)]"
+          className="text-xs tracking-[1px] transition-colors duration-200 hover:text-[var(--fg)]"
           style={{ color: "var(--sub)" }}
         >
           View All Projects →
@@ -60,20 +60,20 @@ export function FeaturedSection() {
               <div>
                 <div className="flex items-baseline gap-3 mb-2">
                   <span
-                    className="text-[10px] font-bold tracking-[1px] shrink-0"
+                    className="text-xs font-bold tracking-[1px] shrink-0"
                     style={{ color: "var(--muted)" }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3
-                    className="text-[15px] font-extrabold tracking-[-0.5px] leading-[1.15] transition-colors duration-200 group-hover:text-[var(--fg)]"
-                    style={{ color: "var(--fg)", opacity: 0.88 }}
+                    className="text-base font-extrabold tracking-[-0.5px] leading-[1.15] transition-colors duration-200 group-hover:text-[var(--fg)]"
+                    style={{ color: "var(--fg)" }}
                   >
                     {project.title}
                   </h3>
                 </div>
                 {project.preview && (
-                  <p className="text-[10px] italic mb-3" style={{ color: "var(--sub)" }}>
+                  <p className="text-xs italic mb-3" style={{ color: "var(--sub)" }}>
                     &ldquo;{project.preview}&rdquo;
                   </p>
                 )}
@@ -81,7 +81,7 @@ export function FeaturedSection() {
                   {project.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[8px] px-[6px] py-[2px] rounded-[2px] border"
+                      className="text-[11px] px-[6px] py-[2px] rounded-[2px] border"
                       style={{
                         color: "var(--sub)",
                         borderColor: "var(--border)",
@@ -97,7 +97,7 @@ export function FeaturedSection() {
               {/* Right col */}
               <div className="flex flex-col items-end justify-between">
                 <span
-                  className="text-[9px] text-right leading-relaxed whitespace-pre-wrap"
+                  className="text-xs text-right leading-relaxed whitespace-pre-wrap"
                   style={{ color: "var(--muted)" }}
                 >
                   {project.period?.replace(" — ", "\n")}
@@ -123,7 +123,7 @@ export function FeaturedSection() {
         className="flex justify-between pt-5 border-t"
         style={{ borderColor: "var(--border)" }}
       >
-        <span className="text-[10px] tracking-[2px]" style={{ color: "var(--muted)" }}>
+        <span className="text-xs tracking-[2px]" style={{ color: "var(--muted)" }}>
           02 / 06
         </span>
       </div>
